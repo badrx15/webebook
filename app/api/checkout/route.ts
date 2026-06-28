@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
   // Derive the correct origin for the redirect URL
   const origin =
     request.headers.get('origin') ||
-    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://ebook-negocios.vercel.app');
 
   // Fire-and-forget: notify admin that someone started checkout
   sendTelegramNotification({

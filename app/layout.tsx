@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   authors: [{ name: 'Vende por WhatsApp' }],
   creator: 'Vende por WhatsApp',
   publisher: 'Vende por WhatsApp',
-  metadataBase: new URL('https://vendeporwhatsapp.com'),
+  metadataBase: new URL('https://ebook-negocios.vercel.app'),
   openGraph: {
     title: 'Cómo vender por WhatsApp sin tienda online | Ebook PDF',
     description:
