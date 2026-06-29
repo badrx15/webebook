@@ -17,7 +17,7 @@ const Pricing = forwardRef<HTMLElement>((_, ref) => {
     pixelEvent('InitiateCheckout', {
       content_name: 'Ebook WhatsApp',
       content_category: 'ebook',
-      value: 17,
+      value: 3,
       currency: 'EUR',
     });
 
@@ -54,9 +54,8 @@ const Pricing = forwardRef<HTMLElement>((_, ref) => {
           viewport={{ once: true, margin: '-80px' }}
           transition={{ duration: 0.6, ease: 'easeOut' }}
         >
-          <p className="mb-1 text-base text-gray-400 line-through sm:text-lg">37€</p>
           <p className="mb-1 text-5xl font-extrabold text-[#C0281A] sm:mb-2 sm:text-6xl md:text-7xl">
-            17€
+            3€
           </p>
           <p className="mb-6 text-base font-semibold text-gray-700 sm:mb-8 sm:text-lg">
             Precio de lanzamiento

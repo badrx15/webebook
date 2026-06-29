@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
                 name: 'Cómo vender por WhatsApp sin tienda online (Ebook PDF)',
                 quantity: '1',
                 base_price_money: {
-                  amount: 1700,
+                  amount: 300,
                   currency: 'EUR',
                 },
               },

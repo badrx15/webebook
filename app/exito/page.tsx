@@ -23,7 +23,7 @@ export default function ExitoPage() {
     pixelEvent('Purchase', {
       content_name: 'Ebook WhatsApp',
       content_category: 'ebook',
-      value: 17,
+      value: 3,
       currency: 'EUR',
     });
   }, []);
