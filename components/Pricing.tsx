@@ -3,14 +3,10 @@
 import { forwardRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { pixelEvent } from '@/lib/pixel';
-import PayPalButton from './PayPalButton';
 
 const Pricing = forwardRef<HTMLElement>((_, ref) => {
   const [loading, setLoading] = useState(false);
-  const [paypalLoading, setPaypalLoading] = useState(false);
   const [error, setError] = useState('');
-
-  const isProcessing = loading || paypalLoading;
 
   const handleSquareCheckout = async () => {
     setLoading(true);
@@ -69,7 +65,7 @@ const Pricing = forwardRef<HTMLElement>((_, ref) => {
             {/* Square - Tarjeta */}
             <button
               onClick={handleSquareCheckout}
-              disabled={isProcessing}
+              disabled={loading}
               className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#C0281A] px-6 py-4 text-base font-bold text-white transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[#C0281A] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 sm:px-10 sm:py-5 sm:text-xl"
             >
               {loading ? (
@@ -106,22 +102,6 @@ const Pricing = forwardRef<HTMLElement>((_, ref) => {
               )}
             </button>
 
-            {/* PayPal */}
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-200" />
-              </div>
-              <div className="relative flex justify-center">
-                <span className="bg-white px-4 text-xs font-medium text-gray-400">
-                  O paga con
-                </span>
-              </div>
-            </div>
-
-            <PayPalButton
-              disabled={isProcessing}
-              onLoadingChange={setPaypalLoading}
-            />
           </div>
 
           {error && (
