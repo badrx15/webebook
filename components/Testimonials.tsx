@@ -35,7 +35,7 @@ const Testimonials = forwardRef<HTMLElement>((_, ref) => {
     <section
       ref={ref}
       id="testimonios"
-      className="bg-[#0d0d0d] px-4 py-16 sm:px-6 lg:py-20 lg:px-8"
+      className="bg-[#0d0d0d] px-4 py-16 sm:px-6 sm:py-20 lg:py-24 lg:px-8 scroll-mt-16"
     >
       <div className="mx-auto max-w-5xl">
         <motion.h2

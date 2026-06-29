@@ -45,7 +45,7 @@ const chapters = [
 
 const WhatYouGet = forwardRef<HTMLElement>((_, ref) => {
   return (
-    <section ref={ref} id="contenido" className="bg-white px-4 py-16 sm:px-6 lg:py-20 lg:px-8">
+    <section ref={ref} id="contenido" className="bg-white px-4 py-16 sm:px-6 sm:py-20 lg:py-24 lg:px-8 scroll-mt-16">
       <div className="mx-auto max-w-6xl">
         <motion.div
           className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16"

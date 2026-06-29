@@ -25,10 +25,10 @@ export default function Navbar({ heroRef }: NavbarProps) {
         scrolled ? 'bg-[#0d0d0d]/95 backdrop-blur-sm shadow-lg' : 'bg-transparent'
       }`}
     >
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+      <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4 lg:px-8">
         <Link
           href="/"
-          className="text-lg font-bold text-white sm:text-xl"
+          className="text-base font-bold text-white sm:text-xl"
           onClick={(e) => {
             e.preventDefault();
             heroRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -38,7 +38,7 @@ export default function Navbar({ heroRef }: NavbarProps) {
         </Link>
         <Link
           href="#precio"
-          className="rounded-lg bg-[#C0281A] px-5 py-2.5 text-sm font-bold text-white transition-opacity hover:opacity-90 sm:px-6 sm:py-3 sm:text-base"
+          className="rounded-lg bg-[#C0281A] px-3.5 py-2 text-xs font-bold text-white transition-opacity hover:opacity-90 sm:px-5 sm:py-2.5 sm:text-sm lg:px-6 lg:py-3 lg:text-base"
           onClick={() => {
             trackEvent(
               'cta_click',

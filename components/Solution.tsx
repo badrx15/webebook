@@ -23,7 +23,7 @@ const itemVariants = {
 
 const Solution = forwardRef<HTMLElement>((_, ref) => {
   return (
-    <section ref={ref} id="sistema" className="bg-[#f5f5f5] px-4 py-16 sm:px-6 lg:py-20 lg:px-8">
+    <section ref={ref} id="sistema" className="bg-[#f5f5f5] px-4 py-16 sm:px-6 sm:py-20 lg:py-24 lg:px-8 scroll-mt-16">
       <div className="mx-auto max-w-5xl">
         <motion.h2
           className="mb-10 text-center text-2xl font-extrabold text-[#0d0d0d] sm:mb-14 sm:text-3xl md:text-4xl"

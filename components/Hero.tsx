@@ -118,22 +118,28 @@ function PhoneMockup() {
   );
 }
 
-// ─── Particles (reduced on mobile for performance) ─────────────
+// ─── Particles (desktop only, no SSR to avoid hydration error) ──
 function ParticleField() {
-  const [isMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth < 640);
+  const [ready, setReady] = useState(false);
 
-  const count = isMobile ? 6 : 20;
+  useEffect(() => {
+    setReady(true);
+  }, []);
+
+  if (!ready) return null;
+
+  const isMobile = window.innerWidth < 640;
+  if (isMobile) return null;
+
+  const count = 20;
   const particles = Array.from({ length: count }, (_, i) => ({
     id: i,
     x: Math.random() * 100,
     y: Math.random() * 100,
-    size: Math.random() * (isMobile ? 2 : 4) + (isMobile ? 1 : 2),
+    size: Math.random() * 4 + 2,
     delay: Math.random() * 5,
     duration: Math.random() * 6 + 4,
   }));
-
-  // Don't render particles on mobile for performance
-  if (isMobile) return null;
 
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -177,7 +183,7 @@ const Hero = forwardRef<HTMLElement, HeroProps>(function Hero(
 
   // ── background glow movement (desktop only) ──────────────────
   const [mousePos, setMousePos] = useState({ x: 0.5, y: 0.5 });
-  const [isDesktop, setIsDesktop] = useState(true);
+  const [isDesktop, setIsDesktop] = useState(false);
 
   useEffect(() => {
     setIsDesktop(window.innerWidth >= 1024);
@@ -201,7 +207,7 @@ const Hero = forwardRef<HTMLElement, HeroProps>(function Hero(
     <section
       ref={ref}
       id="inicio"
-      className="relative flex min-h-screen items-center overflow-hidden bg-[#0d0d0d] px-4 pt-20 pb-12 sm:px-6 lg:pb-16 lg:pt-24"
+      className="relative flex min-h-screen items-center overflow-hidden bg-[#0d0d0d] px-4 pt-20 pb-16 sm:px-6 lg:pb-20 lg:pt-24 scroll-mt-16"
     >
       {/* ── Background glow (desktop only) ── */}
       {isDesktop && (

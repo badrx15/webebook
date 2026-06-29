@@ -45,7 +45,7 @@ const Pricing = forwardRef<HTMLElement>((_, ref) => {
   };
 
   return (
-    <section ref={ref} id="precio" className="bg-white px-4 py-16 sm:px-6 lg:py-20 lg:px-8">
+    <section ref={ref} id="precio" className="bg-white px-4 py-16 sm:px-6 sm:py-20 lg:py-24 lg:px-8 scroll-mt-16">
       <div className="mx-auto max-w-md sm:max-w-lg">
         <motion.div
           className="rounded-2xl border-2 border-[#C0281A] bg-white p-6 shadow-xl sm:rounded-3xl sm:p-10 lg:p-12"

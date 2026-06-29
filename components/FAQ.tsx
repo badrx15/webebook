@@ -34,7 +34,7 @@ const FAQ = forwardRef<HTMLElement>((_, ref) => {
   };
 
   return (
-    <section ref={ref} id="faq" className="bg-[#f5f5f5] px-4 py-20 sm:px-6 lg:px-8">
+    <section ref={ref} id="faq" className="bg-[#f5f5f5] px-4 py-16 sm:py-20 lg:py-24 sm:px-6 lg:px-8 scroll-mt-16">
       <div className="mx-auto max-w-2xl">
         <motion.h2
           className="mb-12 text-center text-3xl font-extrabold text-[#0d0d0d] sm:text-4xl"
