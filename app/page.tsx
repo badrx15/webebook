@@ -42,7 +42,7 @@ export default function HomePage() {
     pixelEvent('ViewContent', {
       content_name: 'Landing Ebook WhatsApp',
       content_category: 'ebook',
-      value: 1,
+      value: 4,
       currency: 'EUR',
     });
   }, []);

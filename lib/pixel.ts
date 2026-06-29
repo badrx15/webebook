@@ -11,7 +11,7 @@ declare global {
  * Safely fire a Meta Pixel event via `fbq('track', event, params)`.
  *
  * @example
- * pixelEvent('Purchase', { value: 1, currency: 'EUR', content_name: 'Ebook WhatsApp' });
+ * pixelEvent('Purchase', { value: 4, currency: 'EUR', content_name: 'Ebook WhatsApp' });
  */
 export function pixelEvent(
   event: string,

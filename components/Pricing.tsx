@@ -16,7 +16,7 @@ const Pricing = forwardRef<HTMLElement>((_, ref) => {
     pixelEvent('InitiateCheckout', {
       content_name: 'Curso WhatsApp',
       content_category: 'curso',
-      value: 1,
+      value: 4,
       currency: 'EUR',
     });
 
@@ -54,10 +54,10 @@ const Pricing = forwardRef<HTMLElement>((_, ref) => {
           transition={{ duration: 0.6, ease: 'easeOut' }}
         >
           <p className="mb-1 text-5xl font-extrabold text-[#C0281A] sm:mb-2 sm:text-6xl md:text-7xl">
-            0.01€
+            4€
           </p>
           <p className="mb-6 text-base font-semibold text-gray-700 sm:mb-8 sm:text-lg">
-            Precio de prueba
+            Precio de lanzamiento
           </p>
 
           {/* Métodos de pago */}

@@ -10,7 +10,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Cómo vender por WhatsApp sin tienda online | Curso por 0.01€',
+  title: 'Cómo vender por WhatsApp sin tienda online | Curso por 4€',
   description:
     'Gané mis primeros 500€ vendiendo por WhatsApp sin tienda online. Sin web, sin seguidores, sin stock. Solo WhatsApp y 3€/día en publicidad. Descarga inmediata.',
   keywords: [
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Cómo vender por WhatsApp sin tienda online | Ebook PDF',
     description:
-      'Aprende a vender por WhatsApp sin web, sin seguidores, sin stock y con 3€/día en publicidad. Curso online por 0.01€.',
+      'Aprende a vender por WhatsApp sin web, sin seguidores, sin stock y con 3€/día en publicidad. Curso online por 4€.',
     type: 'website',
     locale: 'es_ES',
     siteName: 'Vende por WhatsApp',
