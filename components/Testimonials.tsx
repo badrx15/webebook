@@ -35,11 +35,11 @@ const Testimonials = forwardRef<HTMLElement>((_, ref) => {
     <section
       ref={ref}
       id="testimonios"
-      className="bg-[#0d0d0d] px-4 py-20 sm:px-6 lg:px-8"
+      className="bg-[#0d0d0d] px-4 py-16 sm:px-6 lg:py-20 lg:px-8"
     >
       <div className="mx-auto max-w-5xl">
         <motion.h2
-          className="mb-14 text-center text-3xl font-extrabold text-white sm:text-4xl"
+          className="mb-10 text-center text-2xl font-extrabold text-white sm:mb-14 sm:text-3xl md:text-4xl"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-80px' }}
@@ -48,11 +48,11 @@ const Testimonials = forwardRef<HTMLElement>((_, ref) => {
           Lo que dicen quienes ya lo aplican
         </motion.h2>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
           {testimonials.map((t, i) => (
             <motion.article
               key={i}
-              className="flex flex-col rounded-2xl border border-gray-800 bg-[#1a1a1a] p-6"
+              className="flex flex-col rounded-2xl border border-gray-800 bg-[#1a1a1a] p-5 sm:p-6"
               custom={i}
               initial="hidden"
               whileInView="visible"
@@ -60,19 +60,19 @@ const Testimonials = forwardRef<HTMLElement>((_, ref) => {
               variants={cardVariants}
             >
               <div
-                className="mb-3 text-lg text-[#C0281A]"
+                className="mb-2 text-sm text-[#C0281A] sm:mb-3 sm:text-lg"
                 aria-label="5 estrellas"
               >
                 ★★★★★
               </div>
-              <p className="mb-5 flex-1 text-base italic leading-relaxed text-gray-300">
+              <p className="mb-4 flex-1 text-sm italic leading-relaxed text-gray-300 sm:mb-5 sm:text-base">
                 &ldquo;{t.text}&rdquo;
               </p>
-              <div className="flex items-center gap-2 border-t border-gray-700 pt-4">
-                <span className="text-xl" aria-hidden="true">
+              <div className="flex items-center gap-2 border-t border-gray-700 pt-3 sm:pt-4">
+                <span className="text-base sm:text-xl" aria-hidden="true">
                   {t.flag}
                 </span>
-                <strong className="text-white">{t.name}</strong>
+                <strong className="text-sm text-white sm:text-base">{t.name}</strong>
               </div>
             </motion.article>
           ))}

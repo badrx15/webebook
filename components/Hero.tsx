@@ -22,7 +22,7 @@ function AnimatedCounter({
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    const duration = 2000; // 2s
+    const duration = 2000;
     const steps = 30;
     const increment = to / steps;
     let current = 0;
@@ -40,11 +40,13 @@ function AnimatedCounter({
 
   return (
     <div className="text-center" aria-live="polite" aria-label={`${to}${suffix} — ${label}`}>
-      <span className="text-2xl font-extrabold text-white sm:text-3xl">
+      <span className="text-xl font-extrabold text-white sm:text-2xl md:text-3xl">
         {count}
         {suffix}
       </span>
-      <p className="mt-1 text-xs text-gray-400 sm:text-sm">{label}</p>
+      <p className="mt-0.5 text-[11px] text-gray-400 sm:mt-1 sm:text-xs md:text-sm">
+        {label}
+      </p>
     </div>
   );
 }
@@ -61,39 +63,40 @@ const chatMessages = [
 
 function PhoneMockup() {
   return (
-    <motion.div aria-hidden="true"
-      className="relative mx-auto h-[500px] w-[260px] rounded-[2.5rem] border-4 border-gray-700 bg-[#0d0d0d] p-3 shadow-2xl sm:h-[540px] sm:w-[280px]"
+    <motion.div
+      aria-hidden="true"
+      className="relative mx-auto w-[220px] rounded-[2rem] border-4 border-gray-700 bg-[#0d0d0d] p-2.5 shadow-2xl sm:w-[240px] md:w-[260px] md:p-3 md:rounded-[2.5rem]"
       initial={{ opacity: 0, y: 60, scale: 0.9 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ duration: 0.9, ease: 'easeOut', delay: 0.6 }}
+      transition={{ duration: 0.9, ease: 'easeOut', delay: 0.4 }}
     >
       {/* Notch */}
-      <div className="mx-auto mb-4 h-5 w-28 rounded-full bg-black" />
+      <div className="mx-auto mb-2 h-4 w-20 rounded-full bg-black md:mb-4 md:h-5 md:w-28" />
 
       {/* Chat header */}
-      <div className="mb-3 flex items-center gap-2 border-b border-gray-800 pb-2">
-        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#25D366] text-xs font-bold text-white">
+      <div className="mb-2 flex items-center gap-1.5 border-b border-gray-800 pb-1.5 md:mb-3 md:gap-2 md:pb-2">
+        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#25D366] text-[9px] font-bold text-white md:h-8 md:w-8 md:text-xs">
           W
         </div>
         <div className="text-left">
-          <p className="text-xs font-semibold text-white">Cliente potencial</p>
-          <p className="text-[10px] text-gray-500">En línea</p>
+          <p className="text-[10px] font-semibold text-white md:text-xs">Cliente potencial</p>
+          <p className="text-[8px] text-gray-500 md:text-[10px]">En línea</p>
         </div>
       </div>
 
       {/* Messages */}
-      <div className="flex flex-col gap-2 overflow-hidden">
+      <div className="flex flex-col gap-1.5 md:gap-2">
         {chatMessages.map((msg, i) => (
           <motion.div
             key={i}
-            className={`max-w-[85%] rounded-2xl px-3 py-2 text-xs leading-relaxed ${
+            className={`max-w-[88%] rounded-xl px-2 py-1.5 text-[10px] leading-relaxed md:rounded-2xl md:px-3 md:py-2 md:text-xs ${
               msg.side === 'right'
                 ? 'self-end rounded-br-sm bg-[#25D366] text-white'
                 : 'self-start rounded-bl-sm bg-[#1f2c33] text-gray-100'
             }`}
-            initial={{ opacity: 0, x: msg.side === 'right' ? 30 : -30, y: 20 }}
+            initial={{ opacity: 0, x: msg.side === 'right' ? 20 : -20, y: 10 }}
             animate={{ opacity: 1, x: 0, y: 0 }}
-            transition={{ duration: 0.5, delay: 1.2 + i * 0.25, ease: 'easeOut' }}
+            transition={{ duration: 0.4, delay: 0.8 + i * 0.2, ease: 'easeOut' }}
           >
             {msg.text}
           </motion.div>
@@ -101,30 +104,36 @@ function PhoneMockup() {
 
         {/* Animated typing indicator */}
         <motion.div
-          className="self-start flex items-center gap-1 rounded-2xl rounded-bl-sm bg-[#1f2c33] px-3 py-2"
-          initial={{ opacity: 0, x: -30 }}
+          className="self-start flex items-center gap-1 rounded-xl rounded-bl-sm bg-[#1f2c33] px-2 py-1.5 md:rounded-2xl md:px-3 md:py-2"
+          initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5, delay: 1.2 + chatMessages.length * 0.25 }}
+          transition={{ duration: 0.4, delay: 0.8 + chatMessages.length * 0.2 }}
         >
-          <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-gray-400" />
-          <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-gray-400 [animation-delay:0.1s]" />
-          <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-gray-400 [animation-delay:0.2s]" />
+          <span className="h-1 w-1 animate-bounce rounded-full bg-gray-400 md:h-1.5 md:w-1.5" />
+          <span className="h-1 w-1 animate-bounce rounded-full bg-gray-400 md:h-1.5 md:w-1.5 [animation-delay:0.08s]" />
+          <span className="h-1 w-1 animate-bounce rounded-full bg-gray-400 md:h-1.5 md:w-1.5 [animation-delay:0.16s]" />
         </motion.div>
       </div>
     </motion.div>
   );
 }
 
-// ─── Floating glowing particles (background) ───────────────────
+// ─── Particles (reduced on mobile for performance) ─────────────
 function ParticleField() {
-  const particles = Array.from({ length: 20 }, (_, i) => ({
+  const [isMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth < 640);
+
+  const count = isMobile ? 6 : 20;
+  const particles = Array.from({ length: count }, (_, i) => ({
     id: i,
     x: Math.random() * 100,
     y: Math.random() * 100,
-    size: Math.random() * 4 + 2,
+    size: Math.random() * (isMobile ? 2 : 4) + (isMobile ? 1 : 2),
     delay: Math.random() * 5,
     duration: Math.random() * 6 + 4,
   }));
+
+  // Don't render particles on mobile for performance
+  if (isMobile) return null;
 
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -166,9 +175,12 @@ const Hero = forwardRef<HTMLElement, HeroProps>(function Hero(
     pricingRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  // ── background glow movement ────────────────────────────────
+  // ── background glow movement (desktop only) ──────────────────
   const [mousePos, setMousePos] = useState({ x: 0.5, y: 0.5 });
+  const [isDesktop, setIsDesktop] = useState(true);
+
   useEffect(() => {
+    setIsDesktop(window.innerWidth >= 1024);
     const handle = (e: MouseEvent) => {
       setMousePos({ x: e.clientX / window.innerWidth, y: e.clientY / window.innerHeight });
     };
@@ -177,11 +189,11 @@ const Hero = forwardRef<HTMLElement, HeroProps>(function Hero(
   }, []);
 
   const staggerItem = {
-    hidden: { opacity: 0, y: 30 },
+    hidden: { opacity: 0, y: 20 },
     visible: (i: number) => ({
       opacity: 1,
       y: 0,
-      transition: { duration: 0.6, ease: 'easeOut', delay: 0.1 + i * 0.12 },
+      transition: { duration: 0.5, ease: 'easeOut', delay: 0.05 + i * 0.1 },
     }),
   };
 
@@ -189,15 +201,17 @@ const Hero = forwardRef<HTMLElement, HeroProps>(function Hero(
     <section
       ref={ref}
       id="inicio"
-      className="relative flex min-h-screen items-center overflow-hidden bg-[#0d0d0d] px-4 pt-24 pb-16 sm:px-6 lg:px-8"
+      className="relative flex min-h-screen items-center overflow-hidden bg-[#0d0d0d] px-4 pt-20 pb-12 sm:px-6 lg:pb-16 lg:pt-24"
     >
-      {/* ── Background glow that follows mouse ── */}
-      <div
-        className="pointer-events-none absolute -inset-40 opacity-30 blur-[120px] transition-all duration-700"
-        style={{
-          background: `radial-gradient(600px circle at ${mousePos.x * 100}% ${mousePos.y * 100}%, #C0281A 0%, transparent 70%)`,
-        }}
-      />
+      {/* ── Background glow (desktop only) ── */}
+      {isDesktop && (
+        <div
+          className="pointer-events-none absolute -inset-40 opacity-30 blur-[120px] transition-all duration-700"
+          style={{
+            background: `radial-gradient(600px circle at ${mousePos.x * 100}% ${mousePos.y * 100}%, #C0281A 0%, transparent 70%)`,
+          }}
+        />
+      )}
 
       {/* ── Gradient overlay edges ── */}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0d0d0d]" />
@@ -206,16 +220,16 @@ const Hero = forwardRef<HTMLElement, HeroProps>(function Hero(
       <ParticleField />
 
       {/* ── Content ── */}
-      <div className="relative z-10 mx-auto grid w-full max-w-6xl items-center gap-12 lg:grid-cols-2 lg:gap-16">
+      <div className="relative z-10 mx-auto grid w-full max-w-6xl items-center gap-6 md:gap-8 lg:grid-cols-2 lg:gap-16">
         {/* ── Left column: text + CTAs ── */}
         <motion.div
-          className="text-center lg:text-left"
+          className="flex flex-col items-center text-center lg:items-start lg:text-left"
           initial="hidden"
           animate="visible"
         >
           {/* Badge */}
           <motion.div
-            className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#C0281A]/30 bg-[#C0281A]/10 px-4 py-1.5 text-xs font-semibold text-[#C0281A]"
+            className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-[#C0281A]/30 bg-[#C0281A]/10 px-3 py-1 text-[11px] font-semibold text-[#C0281A] md:mb-6 md:gap-2 md:px-4 md:py-1.5 md:text-xs"
             variants={staggerItem}
             custom={0}
           >
@@ -225,39 +239,36 @@ const Hero = forwardRef<HTMLElement, HeroProps>(function Hero(
 
           {/* Headline */}
           <motion.h1
-            className="text-3xl font-extrabold leading-tight text-white sm:text-4xl md:text-5xl lg:text-6xl"
+            className="text-2xl font-extrabold leading-tight text-white sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl"
             variants={staggerItem}
             custom={1}
           >
-            <span className="inline-block">Gané mis primeros</span>{' '}
-            <span className="inline-block text-[#C0281A]">500€</span>{' '}
-            <span className="inline-block">vendiendo por</span>{' '}
-            <span className="inline-block">WhatsApp sin tener</span>{' '}
-            <span className="inline-block">tienda online</span>
+            Gané mis primeros{' '}
+            <span className="text-[#C0281A]">500€</span>{' '}
+            vendiendo por WhatsApp sin tener tienda online
           </motion.h1>
 
           {/* Subtitle */}
           <motion.p
-            className="mx-auto mt-5 max-w-lg text-base leading-relaxed text-gray-400 sm:text-lg lg:mx-0"
+            className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-gray-400 md:mt-5 md:max-w-lg md:text-base lg:mx-0 lg:text-lg"
             variants={staggerItem}
             custom={2}
           >
             Sin web. Sin seguidores. Sin stock. Solo WhatsApp y{' '}
             <span className="font-bold text-white">3€/día en publicidad</span>.
-            El método paso a paso que usé para empezar desde cero.
           </motion.p>
 
-          {/* CTA + trust */}
+          {/* CTA + rating */}
           <motion.div
-            className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:gap-4 lg:justify-start"
+            className="mt-6 flex w-full max-w-sm flex-col items-center gap-3 md:mt-8 md:flex-row md:gap-4 lg:justify-start"
             variants={staggerItem}
             custom={3}
           >
-            <CTAButton href="#precio" large onClick={scrollToPricing}>
+            <CTAButton href="#precio" large onClick={scrollToPricing} className="w-full md:w-auto">
               Quiero el ebook por 17€ →
             </CTAButton>
 
-            <div className="flex items-center gap-1.5 text-xs text-gray-500">
+            <div className="flex items-center gap-1.5 text-[11px] text-gray-500 md:text-xs">
               <span className="flex">⭐⭐⭐⭐⭐</span>
               <span>4.9/5 — 200+ lectores</span>
             </div>
@@ -265,51 +276,56 @@ const Hero = forwardRef<HTMLElement, HeroProps>(function Hero(
 
           {/* Badges row */}
           <motion.div
-            className="mt-6 flex flex-wrap items-center justify-center gap-5 text-xs text-gray-500 lg:justify-start"
+            className="mt-4 flex flex-wrap items-center justify-center gap-3 text-[11px] text-gray-500 md:mt-6 md:gap-5 md:text-xs lg:justify-start"
             variants={staggerItem}
             custom={4}
           >
-            <span className="flex items-center gap-1">📥 Descarga inmediata</span>
-            <span className="flex items-center gap-1">🔒 Pago 100% seguro</span>
-            <span className="flex items-center gap-1">🛡️ Garantía 30 días</span>
+            <span>📥 Descarga inmediata</span>
+            <span>🔒 Pago 100% seguro</span>
+            <span>🛡️ Garantía 30 días</span>
           </motion.div>
 
           {/* Stats row */}
           <motion.div
-            className="mt-10 grid grid-cols-3 gap-4 border-t border-gray-800 pt-8"
+            className="mt-6 grid w-full max-w-sm grid-cols-3 gap-2 border-t border-gray-800 pt-5 md:mt-10 md:gap-4 md:pt-8"
             variants={staggerItem}
             custom={5}
           >
-            <AnimatedCounter to={500} suffix="€" label="Ganados mi primer mes" />
+            <AnimatedCounter to={500} suffix="€" label="Ganados primer mes" />
             <AnimatedCounter to={200} suffix="+" label="Personas lo aplican" />
             <AnimatedCounter to={0} suffix="€" label="Inversión inicial" />
           </motion.div>
         </motion.div>
 
-        {/* ── Right column: phone mockup ── */}
+        {/* ── Right column: phone mockup (desktop) ── */}
         <div className="hidden lg:flex lg:justify-center">
           <PhoneMockup />
         </div>
       </div>
 
-      {/* ── Mobile phone mockup ── */}
-      <div className="relative z-10 mt-8 lg:hidden">
+      {/* ── Mobile phone mockup (below content) ── */}
+      <motion.div
+        className="relative z-10 mt-6 lg:hidden"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.3 }}
+      >
         <PhoneMockup />
-      </div>
+      </motion.div>
 
       {/* ── Scroll indicator ── */}
       <motion.div
-        className="absolute bottom-6 left-1/2 z-10 -translate-x-1/2"
+        className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 md:bottom-6"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 3.5, duration: 0.8 }}
+        transition={{ delay: 3, duration: 0.8 }}
       >
         <motion.div
-          className="flex flex-col items-center gap-1 text-xs text-gray-600"
-          animate={{ y: [0, 6, 0] }}
+          className="flex flex-col items-center gap-1 text-[11px] text-gray-600 md:text-xs"
+          animate={{ y: [0, 5, 0] }}
           transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="md:w-5 md:h-5">
             <path d="M12 5v14M5 12l7 7 7-7" />
           </svg>
           <span>Descubre más</span>
