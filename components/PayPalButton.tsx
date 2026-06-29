@@ -21,7 +21,7 @@ export default function PayPalButton({ disabled, onLoadingChange }: PayPalButton
     pixelEvent('InitiateCheckout', {
       content_name: 'Curso WhatsApp',
       content_category: 'curso',
-      value: 3,
+      value: 1,
       currency: 'EUR',
     });
 

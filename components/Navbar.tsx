@@ -42,11 +42,11 @@ export default function Navbar({ heroRef }: NavbarProps) {
           onClick={() => {
             trackEvent(
               'cta_click',
-              '🔴 CTA Navbar: Comprar por 3€'
+              '🔴 CTA Navbar: Probar por 0.01€'
             );
           }}
         >
-          Comprar por 3€
+          Probar por 0.01€
         </Link>
       </nav>
     </header>

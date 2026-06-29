@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
           {
             amount: {
               currency_code: 'EUR',
-              value: '3.00',
+              value: '0.01',
             },
             description: 'Curso: Cómo vender por WhatsApp sin tienda online',
           },

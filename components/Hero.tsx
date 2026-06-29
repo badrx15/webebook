@@ -14,7 +14,7 @@ const Hero = forwardRef<HTMLElement, HeroProps>(function Hero(
 ) {
   const scrollToPricing = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    trackEvent('cta_click', '🔴 CTA Hero: Quiero el curso por 3€');
+    trackEvent('cta_click', '🔴 CTA Hero: Probar curso por 0.01€');
     pricingRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
@@ -47,7 +47,7 @@ const Hero = forwardRef<HTMLElement, HeroProps>(function Hero(
         {/* CTA + rating */}
         <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center sm:gap-5">
           <CTAButton href="#precio" large onClick={scrollToPricing}>
-            Quiero el curso por 3€ →
+            Probar curso por 0.01€ →
           </CTAButton>
 
           <div className="flex items-center gap-1.5 text-xs text-gray-500">
