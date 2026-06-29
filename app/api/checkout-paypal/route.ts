@@ -3,8 +3,12 @@ import { sendTelegramNotification } from '@/lib/telegram';
 
 const PAYPAL_CLIENT_ID = process.env.PAYPAL_CLIENT_ID;
 const PAYPAL_SECRET = process.env.PAYPAL_SECRET;
+const PAYPAL_ENVIRONMENT = process.env.PAYPAL_ENVIRONMENT || 'sandbox';
 
-const PAYPAL_API_URL = 'https://api-m.paypal.com';
+const PAYPAL_API_URL =
+  PAYPAL_ENVIRONMENT === 'production'
+    ? 'https://api-m.paypal.com'
+    : 'https://api-m.sandbox.paypal.com';
 
 /**
  * Get PayPal access token using Client ID + Secret (Basic Auth)
