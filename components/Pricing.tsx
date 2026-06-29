@@ -2,21 +2,24 @@
 
 import { forwardRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { trackEvent } from '@/lib/track';
 import { pixelEvent } from '@/lib/pixel';
+import PayPalButton from './PayPalButton';
 
 const Pricing = forwardRef<HTMLElement>((_, ref) => {
   const [loading, setLoading] = useState(false);
+  const [paypalLoading, setPaypalLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleCheckout = async () => {
+  const isProcessing = loading || paypalLoading;
+
+  const handleSquareCheckout = async () => {
     setLoading(true);
     setError('');
 
     // Meta Pixel: InitiateCheckout
     pixelEvent('InitiateCheckout', {
-      content_name: 'Ebook WhatsApp',
-      content_category: 'ebook',
+      content_name: 'Curso WhatsApp',
+      content_category: 'curso',
       value: 3,
       currency: 'EUR',
     });
@@ -61,39 +64,65 @@ const Pricing = forwardRef<HTMLElement>((_, ref) => {
             Precio de lanzamiento
           </p>
 
-          <button
-            onClick={handleCheckout}
-            disabled={loading}
-            className="inline-flex w-full items-center justify-center rounded-lg bg-[#C0281A] px-6 py-4 text-base font-bold text-white transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[#C0281A] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 sm:px-10 sm:py-5 sm:text-xl"
-          >
-            {loading ? (
-              <span className="flex items-center gap-2">
-                <svg
-                  className="h-5 w-5 animate-spin text-white"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                  />
-                </svg>
-                Redirigiendo al pago…
-              </span>
-            ) : (
-              'Quiero el ebook ahora →'
-            )}
-          </button>
+          {/* Métodos de pago */}
+          <div className="space-y-3">
+            {/* Square - Tarjeta */}
+            <button
+              onClick={handleSquareCheckout}
+              disabled={isProcessing}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#C0281A] px-6 py-4 text-base font-bold text-white transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[#C0281A] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 sm:px-10 sm:py-5 sm:text-xl"
+            >
+              {loading ? (
+                <span className="flex items-center gap-2">
+                  <svg
+                    className="h-5 w-5 animate-spin text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                    />
+                  </svg>
+                  Redirigiendo al pago…
+                </span>
+              ) : (
+                <>
+                  <svg viewBox="0 0 24 24" className="h-5 w-5 sm:h-6 sm:w-6" fill="currentColor">
+                    <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>
+                  </svg>
+                  Pagar con tarjeta (Visa/MC)
+                </>
+              )}
+            </button>
+
+            {/* PayPal */}
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-200" />
+              </div>
+              <div className="relative flex justify-center">
+                <span className="bg-white px-4 text-xs font-medium text-gray-400">
+                  O paga con
+                </span>
+              </div>
+            </div>
+
+            <PayPalButton
+              disabled={isProcessing}
+              onLoadingChange={setPaypalLoading}
+            />
+          </div>
 
           {error && (
             <p className="mt-3 text-center text-sm font-medium text-red-600">{error}</p>
