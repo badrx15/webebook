@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180" viewBox="0 0 180 180">
+  <rect width="180" height="180" rx="34" fill="#0d0d0d"/>
+  <path d="M40 30h100a24 24 0 0 1 24 24v60a24 24 0 0 1-24 24h-12l-20 20-20-20H40a24 24 0 0 1-24-24V54a24 24 0 0 1 24-24z" fill="#C0281A" opacity="0.9"/>
+  <text x="90" y="112" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="bold" font-size="84" fill="#ffffff">V</text>
+</svg>
