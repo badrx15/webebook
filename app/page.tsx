@@ -37,12 +37,7 @@ export default function LandingPage() {
               <a href="#calidad" className="text-sm font-medium text-gray-600 hover:text-red-700 transition-colors">Calidad</a>
               <a href="#testimonios" className="text-sm font-medium text-gray-600 hover:text-red-700 transition-colors">Opiniones</a>
               <a href="#contacto" className="text-sm font-medium text-gray-600 hover:text-red-700 transition-colors">Contacto</a>
-              <Link href="/admin" className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-700 text-white text-sm font-semibold hover:bg-red-800 transition-all shadow-lg shadow-red-700/25">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                </svg>
-                Admin
-              </Link>
+
             </div>
 
             <button onClick={() => setMenuOpen(!menuOpen)} className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors">
@@ -63,10 +58,7 @@ export default function LandingPage() {
               <a href="#calidad" onClick={() => setMenuOpen(false)} className="block text-sm font-medium text-gray-600 hover:text-red-700 py-2">Calidad</a>
               <a href="#testimonios" onClick={() => setMenuOpen(false)} className="block text-sm font-medium text-gray-600 hover:text-red-700 py-2">Opiniones</a>
               <a href="#contacto" onClick={() => setMenuOpen(false)} className="block text-sm font-medium text-gray-600 hover:text-red-700 py-2">Contacto</a>
-              <Link href="/admin" onClick={() => setMenuOpen(false)}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-red-700 text-white text-sm font-semibold">
-                Panel de Administración
-              </Link>
+
             </div>
           </div>
         )}
@@ -170,10 +162,7 @@ export default function LandingPage() {
             <div className="text-center py-12">
               <div className="text-6xl mb-4">📦</div>
               <p className="text-gray-500 mb-4">No hay productos disponibles todavía</p>
-              <Link href="/admin/products"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-red-700 text-white font-semibold hover:bg-red-800 transition-all">
-                Añadir productos
-              </Link>
+              <p className="text-sm text-gray-400">Próximamente disponibles</p>
             </div>
           ) : (
             <div className="space-y-16">
@@ -325,7 +314,7 @@ export default function LandingPage() {
               className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-white text-red-700 font-semibold text-base hover:bg-red-50 transition-all shadow-xl active:scale-95">
               Ver productos
             </a>
-            <a href="mailto:info@ibericosgourmet.com"
+            <a href="mailto:nakhilbadreddin@gmail.com"
               className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full border-2 border-white/30 text-white font-semibold text-base hover:bg-white/10 transition-all active:scale-95">
               Contactar
             </a>
@@ -353,14 +342,14 @@ export default function LandingPage() {
               <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">Enlaces</h3>
               <ul className="space-y-2">
                 <li><a href="#productos" className="text-sm hover:text-white transition-colors">Productos</a></li>
-                <li><a href="/admin" className="text-sm hover:text-white transition-colors">Administración</a></li>
+
               </ul>
             </div>
             <div>
               <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">Contacto</h3>
               <ul className="space-y-2 text-sm">
-                <li>📧 info@ibericosgourmet.com</li>
-                <li>📞 +34 600 000 000</li>
+                <li>📧 nakhilbadreddin@gmail.com</li>
+                <li>📞 +34 614 070 656</li>
                 <li>📍 Extremadura, España</li>
               </ul>
             </div>
