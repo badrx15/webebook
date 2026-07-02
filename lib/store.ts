@@ -1,9 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import type { AppData, Product, Sale, Expense, BusinessSettings, SaleItem, Order, OrderItem, ShippingAddress, OrderStatus } from './types';
-
-const STORAGE_KEY = 'sales-manager-data';
+import type { AppData, Product, Sale, Expense, BusinessSettings, Order, OrderItem, ShippingAddress, OrderStatus } from './types';
 
 const DEFAULT_SETTINGS: BusinessSettings = {
   businessName: 'Mi Negocio',
@@ -22,39 +20,14 @@ const DEFAULT_DATA: AppData = {
   settings: DEFAULT_SETTINGS,
 };
 
-function loadData(): AppData {
-  if (typeof window === 'undefined') return DEFAULT_DATA;
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return DEFAULT_DATA;
-    const data = JSON.parse(raw) as AppData;
-    // Merge with defaults for any missing fields
-    return {
-      ...DEFAULT_DATA,
-      ...data,
-      settings: { ...DEFAULT_SETTINGS, ...data.settings },
-    };
-  } catch {
-    return DEFAULT_DATA;
-  }
-}
-
-function saveData(data: AppData): void {
-  if (typeof window === 'undefined') return;
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  } catch (e) {
-    console.error('Error saving data:', e);
-  }
-}
-
 // Generate a simple unique ID
 export function generateId(): string {
   return Date.now().toString(36) + Math.random().toString(36).substring(2, 9);
 }
 
-const HISTORY_KEY = 'sales-manager-history';
+// In-memory history for undo (per session)
 const MAX_HISTORY = 50;
+const HISTORY_KEY = 'sales-manager-history';
 
 function loadHistory(): AppData[] {
   if (typeof window === 'undefined') return [];
@@ -71,7 +44,7 @@ function saveHistory(history: AppData[]): void {
   try {
     localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
   } catch {
-    // Silently fail if history storage is full
+    // Silently fail
   }
 }
 
@@ -83,24 +56,86 @@ function pushHistory(history: AppData[], currentData: AppData): AppData[] {
   return next;
 }
 
+async function fetchData(): Promise<AppData> {
+  try {
+    const res = await fetch('/api/data');
+    const result = await res.json();
+    if (result.success && result.data) {
+      return {
+        ...DEFAULT_DATA,
+        ...result.data,
+        settings: { ...DEFAULT_SETTINGS, ...result.data.settings },
+      };
+    }
+  } catch (e) {
+    console.error('Error fetching data from server:', e);
+  }
+  return DEFAULT_DATA;
+}
+
+async function saveDataToServer(data: AppData): Promise<boolean> {
+  try {
+    const res = await fetch('/api/data', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    const result = await res.json();
+    return result.success === true;
+  } catch (e) {
+    console.error('Error saving data to server:', e);
+    return false;
+  }
+}
+
 export function useStore() {
   const [data, setData] = useState<AppData>(DEFAULT_DATA);
   const [loaded, setLoaded] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const dataRef = useRef<AppData>(DEFAULT_DATA);
   const historyRef = useRef<AppData[]>([]);
   const [canUndo, setCanUndo] = useState(false);
+  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Load data from server on mount
   useEffect(() => {
-    const loadedData = loadData();
-    const loadedHistory = loadHistory();
-    setData(loadedData);
-    historyRef.current = loadedHistory;
-    setCanUndo(loadedHistory.length > 0);
-    setLoaded(true);
+    let cancelled = false;
+
+    (async () => {
+      const serverData = await fetchData();
+      if (cancelled) return;
+      const merged = {
+        ...DEFAULT_DATA,
+        ...serverData,
+        settings: { ...DEFAULT_SETTINGS, ...serverData.settings },
+      };
+      setData(merged);
+      dataRef.current = merged;
+      setLoaded(true);
+      setLoading(false);
+    })();
+
+    // Load history from localStorage
+    const history = loadHistory();
+    historyRef.current = history;
+    setCanUndo(history.length > 0);
+
+    return () => {
+      cancelled = true;
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
   }, []);
 
-  const persist = useCallback((newData: AppData) => {
-    setData(newData);
-    saveData(newData);
+  // Debounced save to server (avoids multiple rapid writes)
+  const scheduleSave = useCallback((newData: AppData) => {
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+    saveTimeoutRef.current = setTimeout(() => {
+      saveDataToServer(newData);
+    }, 300);
   }, []);
 
   const pushToHistory = useCallback((currentData: AppData) => {
@@ -111,29 +146,32 @@ export function useStore() {
   }, []);
 
   const mutate = useCallback((updater: (prev: AppData) => AppData) => {
-    setData(prev => {
-      // Save current state to history before mutating (using ref for latest history)
-      pushToHistory(prev);
-      
-      const newData = updater(prev);
-      saveData(newData);
-      return newData;
-    });
-  }, [pushToHistory]);
+    // Ignore mutations until data is loaded from server
+    if (!loaded) return;
+
+    const prev = dataRef.current;
+    pushToHistory(prev);
+
+    const newData = updater(prev);
+    dataRef.current = newData;
+    setData(newData);
+    scheduleSave(newData);
+  }, [loaded, pushToHistory, scheduleSave]);
 
   // --- Undo ---
   const undo = useCallback(() => {
     const hist = historyRef.current;
     if (hist.length === 0) return;
-    
+
     const newHistory = [...hist];
     const previousState = newHistory.pop()!;
     historyRef.current = newHistory;
     saveHistory(newHistory);
     setCanUndo(newHistory.length > 0);
+    dataRef.current = previousState;
     setData(previousState);
-    saveData(previousState);
-  }, []);
+    scheduleSave(previousState);
+  }, [scheduleSave]);
 
   // --- Products ---
   const addProduct = useCallback((product: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>) => {
@@ -239,6 +277,7 @@ export function useStore() {
   return {
     data,
     loaded,
+    loading,
     canUndo,
     addProduct,
     updateProduct,

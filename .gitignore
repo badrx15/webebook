@@ -20,6 +20,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Database JSON file (user data, not code)
+data/db.json
+
 # Misc
 .DS_Store
 *.pem
