@@ -169,7 +169,6 @@ export default function CheckoutContent() {
           <p className="text-sm text-gray-600 mb-8">📦 Envío a: {form.street}, {form.city}, {form.province} ({form.postalCode})</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link href="/" className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-red-700 text-white font-semibold hover:bg-red-800 transition-all">Volver a la Tienda</Link>
-            <Link href="/admin" className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full border-2 border-gray-200 text-gray-700 font-semibold hover:border-red-200 transition-all">Panel de Administración</Link>
           </div>
         </div>
       </main>
