@@ -100,8 +100,8 @@ export function useStore() {
   const dataRef = useRef<AppData>(hasInitialData ? adminInitialData : DEFAULT_DATA);
   const historyRef = useRef<AppData[]>([]);
   const [canUndo, setCanUndo] = useState(false);
-  // Track whether background fetch completed (to prevent race conditions)
-  const fetchCompleteRef = useRef(!hasInitialData);
+  // Tracks if user has made any mutation since mount (to prevent background fetch from overwriting)
+  const hasMutatedRef = useRef(false);
 
   // Always fetch from server on mount to keep data in sync
   // (initial data from context provides instant display while fetch completes)
@@ -116,9 +116,11 @@ export function useStore() {
         ...serverData,
         settings: { ...DEFAULT_SETTINGS, ...serverData.settings },
       };
-      setData(merged);
-      dataRef.current = merged;
-      fetchCompleteRef.current = true;
+      // Only overwrite if the user hasn't made any mutations yet
+      if (!hasMutatedRef.current) {
+        setData(merged);
+        dataRef.current = merged;
+      }
       setLoaded(true);
       setLoading(false);
     })();
@@ -141,8 +143,7 @@ export function useStore() {
   }, []);
 
   const mutate = useCallback((updater: (prev: AppData) => AppData) => {
-    // Ignore mutations until data is loaded and background fetch completed
-    if (!loaded || !fetchCompleteRef.current) return;
+    if (!loaded) return;
 
     const prev = dataRef.current;
     pushToHistory(prev);
@@ -150,6 +151,7 @@ export function useStore() {
     const newData = updater(prev);
     dataRef.current = newData;
     setData(newData);
+    hasMutatedRef.current = true;
     // Save immediately to server
     saveDataToServer(newData);
   }, [loaded, pushToHistory]);
