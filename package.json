@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@square/web-payments-sdk-types": "^1.83.11",
+    "@vercel/blob": "^2.5.0",
     "framer-motion": "^11.0.0",
     "html2pdf.js": "^0.14.0",
     "next": "^14.2.0",
