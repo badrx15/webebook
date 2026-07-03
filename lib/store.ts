@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import type { AppData, Product, Sale, Expense, BusinessSettings, Order, OrderItem, ShippingAddress, OrderStatus } from './types';
+import type { AppData, Product, Sale, Expense, BusinessSettings, Order, OrderItem, ShippingAddress, OrderStatus, ShipmentTracking } from './types';
 import { useAdminInitialData, useAdminDataUpdater } from './admin-store-context';
 
 const DEFAULT_SETTINGS: BusinessSettings = {
@@ -11,6 +11,15 @@ const DEFAULT_SETTINGS: BusinessSettings = {
   defaultMargin: 30,
   taxRate: 21,
   lowStockThreshold: 5,
+  originAddress: {
+    fullName: '',
+    phone: '',
+    street: '',
+    city: '',
+    province: '',
+    postalCode: '',
+    country: 'ES',
+  },
 };
 
 const DEFAULT_DATA: AppData = {
@@ -297,6 +306,15 @@ export function useStore() {
     }));
   }, [mutate]);
 
+  const updateOrderTracking = useCallback((id: string, tracking: ShipmentTracking, orderStatus: OrderStatus = 'enviado') => {
+    mutate(prev => ({
+      ...prev,
+      orders: prev.orders.map(o =>
+        o.id === id ? { ...o, status: orderStatus, shipmentTracking: tracking } : o
+      ),
+    }));
+  }, [mutate]);
+
   const deleteOrder = useCallback((id: string) => {
     const shortId = id.slice(0, 8);
     mutate(prev => ({
@@ -322,6 +340,7 @@ export function useStore() {
     deleteProduct,
     addOrder,
     updateOrderStatus,
+    updateOrderTracking,
     deleteOrder,
     addSale,
     deleteSale,

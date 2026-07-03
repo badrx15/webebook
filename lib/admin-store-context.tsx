@@ -10,6 +10,15 @@ const DEFAULT_SETTINGS = {
   defaultMargin: 30,
   taxRate: 21,
   lowStockThreshold: 5,
+  originAddress: {
+    fullName: '',
+    phone: '',
+    street: '',
+    city: '',
+    province: '',
+    postalCode: '',
+    country: 'ES',
+  },
 };
 
 const DEFAULT_DATA: AppData = {
