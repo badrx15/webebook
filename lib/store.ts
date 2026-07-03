@@ -95,8 +95,6 @@ export function useStore() {
   const dataRef = useRef<AppData>(DEFAULT_DATA);
   const historyRef = useRef<AppData[]>([]);
   const [canUndo, setCanUndo] = useState(false);
-  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
   // Load data from server on mount
   useEffect(() => {
     let cancelled = false;
@@ -122,20 +120,7 @@ export function useStore() {
 
     return () => {
       cancelled = true;
-      if (saveTimeoutRef.current) {
-        clearTimeout(saveTimeoutRef.current);
-      }
     };
-  }, []);
-
-  // Debounced save to server (avoids multiple rapid writes)
-  const scheduleSave = useCallback((newData: AppData) => {
-    if (saveTimeoutRef.current) {
-      clearTimeout(saveTimeoutRef.current);
-    }
-    saveTimeoutRef.current = setTimeout(() => {
-      saveDataToServer(newData);
-    }, 300);
   }, []);
 
   const pushToHistory = useCallback((currentData: AppData) => {
@@ -155,8 +140,9 @@ export function useStore() {
     const newData = updater(prev);
     dataRef.current = newData;
     setData(newData);
-    scheduleSave(newData);
-  }, [loaded, pushToHistory, scheduleSave]);
+    // Save immediately to server
+    saveDataToServer(newData);
+  }, [loaded, pushToHistory]);
 
   // --- Undo ---
   const undo = useCallback(() => {
@@ -170,8 +156,8 @@ export function useStore() {
     setCanUndo(newHistory.length > 0);
     dataRef.current = previousState;
     setData(previousState);
-    scheduleSave(previousState);
-  }, [scheduleSave]);
+    saveDataToServer(previousState);
+  }, []);
 
   // --- Products ---
   const addProduct = useCallback((product: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>) => {
