@@ -54,7 +54,7 @@ export async function setData(data: AppData): Promise<void> {
 // --- Vercel Blob (production) ---
 
 const BLOB_OPTIONS = {
-  access: 'public' as const,
+  access: 'private' as const,
   contentType: 'application/json' as const,
   addRandomSuffix: false,
 };
@@ -64,7 +64,7 @@ async function getFromBlob(): Promise<AppData> {
     const { blobs } = await list({ prefix: BLOB_PATHNAME, limit: 1 });
     if (blobs.length === 0) return DEFAULT_DATA;
 
-    const result = await get(blobs[0].url, { access: 'public' });
+    const result = await get(blobs[0].url, { access: 'private' });
     if (!result || result.statusCode !== 200 || !result.stream) return DEFAULT_DATA;
     const text = await new Response(result.stream).text();
     const data = JSON.parse(text);
