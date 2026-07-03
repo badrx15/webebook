@@ -1,17 +1,12 @@
-'use client';
-
-import { useState } from 'react';
 import Link from 'next/link';
-import { useStore } from '@/lib/store';
+import { getData } from '@/lib/data-store';
 import { formatCurrency } from '@/lib/utils';
+import LandingMobileMenu from '@/components/LandingMobileMenu';
 
-export default function LandingPage() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const { data } = useStore();
+export default async function LandingPage() {
+  const data = await getData();
   const { products, settings } = data;
   const currencySymbol = settings.currencySymbol;
-
-  const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
 
   return (
     <div className="min-h-screen bg-white">
@@ -33,31 +28,11 @@ export default function LandingPage() {
               <a href="#calidad" className="text-sm font-medium text-gray-600 hover:text-red-700 transition-colors">Calidad</a>
               <a href="#testimonios" className="text-sm font-medium text-gray-600 hover:text-red-700 transition-colors">Opiniones</a>
               <a href="#contacto" className="text-sm font-medium text-gray-600 hover:text-red-700 transition-colors">Contacto</a>
-
             </div>
 
-            <button onClick={() => setMenuOpen(!menuOpen)} className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors">
-              <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                {menuOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                )}
-              </svg>
-            </button>
+            <LandingMobileMenu />
           </div>
         </div>
-        {menuOpen && (
-          <div className="lg:hidden border-t border-gray-100 bg-white">
-            <div className="px-4 py-4 space-y-3">
-              <a href="#productos" onClick={() => setMenuOpen(false)} className="block text-sm font-medium text-gray-600 hover:text-red-700 py-2">Productos</a>
-              <a href="#calidad" onClick={() => setMenuOpen(false)} className="block text-sm font-medium text-gray-600 hover:text-red-700 py-2">Calidad</a>
-              <a href="#testimonios" onClick={() => setMenuOpen(false)} className="block text-sm font-medium text-gray-600 hover:text-red-700 py-2">Opiniones</a>
-              <a href="#contacto" onClick={() => setMenuOpen(false)} className="block text-sm font-medium text-gray-600 hover:text-red-700 py-2">Contacto</a>
-
-            </div>
-          </div>
-        )}
       </nav>
 
       {/* ===== HERO ===== */}
@@ -139,7 +114,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ===== PRODUCTS FROM CRM ===== */}
+      {/* ===== PRODUCTS ===== */}
       <section id="productos" className="py-20 lg:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -162,9 +137,8 @@ export default function LandingPage() {
             </div>
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-              {products.map(product => (
+              {products.map((product, index) => (
                 <div key={product.id} className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl hover:border-red-100 transition-all duration-300">
-                  {/* Image */}
                   <div className="relative aspect-square bg-gradient-to-br from-red-50 to-amber-50 overflow-hidden">
                     {product.image ? (
                       <img
@@ -177,17 +151,15 @@ export default function LandingPage() {
                         <span className="text-7xl sm:text-8xl">🥩</span>
                       </div>
                     )}
-                    {/* Badge */}
                     <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 text-xs font-bold text-red-700 shadow-sm">
                       Envío gratis
                     </div>
-                    {products.indexOf(product) === 0 && (
+                    {index === 0 && (
                       <div className="absolute top-3 right-3 bg-red-700 text-white rounded-full px-3 py-1 text-xs font-bold shadow-lg">
                         Más vendido
                       </div>
                     )}
                   </div>
-                  {/* Content */}
                   <div className="p-5">
                     <h3 className="text-base font-bold text-gray-900 leading-tight">{product.name}</h3>
                     <p className="text-sm text-gray-500 mt-1.5 line-clamp-2 leading-relaxed">
@@ -304,7 +276,6 @@ export default function LandingPage() {
               <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">Enlaces</h3>
               <ul className="space-y-2">
                 <li><a href="#productos" className="text-sm hover:text-white transition-colors">Productos</a></li>
-
               </ul>
             </div>
             <div>
