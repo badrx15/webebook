@@ -49,7 +49,14 @@ async function callEnvia(endpoint: string, body: any): Promise<any> {
     body: JSON.stringify(body),
   });
 
-  const data = await res.json();
+  let data: any;
+  const contentType = res.headers.get('content-type') || '';
+  if (contentType.includes('application/json')) {
+    data = await res.json();
+  } else {
+    const text = await res.text();
+    data = { error: text || `HTTP ${res.status}: Respuesta no JSON` };
+  }
 
   if (!res.ok) {
     return { error: extractError(data), httpStatus: res.status };
@@ -148,8 +155,9 @@ export async function POST(request: NextRequest) {
     }
   } catch (error: any) {
     console.error('Error en API Envia:', error);
+    const errorMsg = error.message || 'Error al comunicar con Envia';
     return NextResponse.json(
-      { success: false, error: error.message || 'Error al comunicar con Envia' },
+      { success: false, error: errorMsg },
       { status: 500 }
     );
   }

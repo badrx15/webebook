@@ -128,10 +128,17 @@ export default function ShippingPage() {
         }),
       });
 
-      const result = await res.json();
+      let result;
+      try {
+        result = await res.json();
+      } catch {
+        setRatesError(`Error del servidor (HTTP ${res.status}). La respuesta no es JSON.`);
+        setRatesLoading(null);
+        return;
+      }
 
       if (!result.success) {
-        setRatesError(result.error || 'Error al obtener tarifas');
+        setRatesError(result.error || `Error del servidor (HTTP ${res.status})`);
         setRatesLoading(null);
         return;
       }
@@ -218,10 +225,17 @@ export default function ShippingPage() {
         }),
       });
 
-      const result = await res.json();
+      let result;
+      try {
+        result = await res.json();
+      } catch {
+        setGenerateError(`Error del servidor (HTTP ${res.status}). La respuesta no es JSON.`);
+        setGenerating(null);
+        return;
+      }
 
       if (!result.success) {
-        setGenerateError(result.error || 'Error al generar etiqueta');
+        setGenerateError(result.error || `Error del servidor (HTTP ${res.status})`);
         setGenerating(null);
         return;
       }
