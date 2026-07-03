@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import type { AppData, Product, Sale, Expense, BusinessSettings, Order, OrderItem, ShippingAddress, OrderStatus } from './types';
-import { useAdminInitialData } from './admin-store-context';
+import { useAdminInitialData, useAdminDataUpdater } from './admin-store-context';
 
 const DEFAULT_SETTINGS: BusinessSettings = {
   businessName: 'Mi Negocio',
@@ -91,6 +91,7 @@ async function saveDataToServer(data: AppData): Promise<boolean> {
 
 export function useStore() {
   const adminInitialData = useAdminInitialData();
+  const updateAdminData = useAdminDataUpdater();
   const hasInitialData = adminInitialData !== null;
 
   // Use initial data as starting point (fast instant display)
@@ -102,6 +103,8 @@ export function useStore() {
   const [canUndo, setCanUndo] = useState(false);
   // Tracks if user has made any mutation since mount (to prevent background fetch from overwriting)
   const hasMutatedRef = useRef(false);
+  // Sequential save queue to prevent race conditions (earlier saves overwriting later ones)
+  const saveQueueRef = useRef<Promise<void>>(Promise.resolve());
 
   // Always fetch from server on mount to keep data in sync
   // (initial data from context provides instant display while fetch completes)
@@ -142,6 +145,18 @@ export function useStore() {
     setCanUndo(next.length > 0);
   }, []);
 
+  const enqueueSave = useCallback((newData: AppData) => {
+    // Chain saves sequentially: each save waits for the previous one to complete
+    // This ensures the latest data always wins (no race conditions)
+    saveQueueRef.current = saveQueueRef.current.then(async () => {
+      // Before saving, read the CURRENT dataRef (might have been updated by a subsequent mutation)
+      const currentData = dataRef.current;
+      await saveDataToServer(currentData);
+    });
+    // Catch to prevent unhandled promise rejections
+    saveQueueRef.current = saveQueueRef.current.catch(() => {});
+  }, []);
+
   const mutate = useCallback((updater: (prev: AppData) => AppData) => {
     if (!loaded) return;
 
@@ -152,9 +167,13 @@ export function useStore() {
     dataRef.current = newData;
     setData(newData);
     hasMutatedRef.current = true;
-    // Save immediately to server
-    saveDataToServer(newData);
-  }, [loaded, pushToHistory]);
+    // Update the AdminDataProvider context so page re-mounts get fresh data immediately
+    if (updateAdminData) {
+      updateAdminData(newData);
+    }
+    // Queue save to server (sequential, no race conditions)
+    enqueueSave(newData);
+  }, [loaded, pushToHistory, enqueueSave, updateAdminData]);
 
   // --- Undo ---
   const undo = useCallback(() => {
@@ -168,8 +187,11 @@ export function useStore() {
     setCanUndo(newHistory.length > 0);
     dataRef.current = previousState;
     setData(previousState);
-    saveDataToServer(previousState);
-  }, []);
+    if (updateAdminData) {
+      updateAdminData(previousState);
+    }
+    enqueueSave(previousState);
+  }, [enqueueSave, updateAdminData]);
 
   // --- Products ---
   const addProduct = useCallback((product: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>) => {
