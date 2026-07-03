@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { getData } from '@/lib/data-store';
 import { formatCurrency } from '@/lib/utils';
 import LandingMobileMenu from '@/components/LandingMobileMenu';
+import ProductViewTracker from '@/components/ProductViewTracker';
 
 export default async function LandingPage() {
   const data = await getData();
@@ -9,7 +10,14 @@ export default async function LandingPage() {
   const currencySymbol = settings.currencySymbol;
 
   return (
-    <div className="min-h-screen bg-white">
+    <>
+      <ProductViewTracker products={products.map(p => ({
+        id: p.id,
+        name: p.name,
+        category: p.category,
+        sellingPrice: p.sellingPrice,
+      }))} />
+      <div className="min-h-screen bg-white">
       {/* ===== NAVBAR ===== */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -293,5 +301,6 @@ export default async function LandingPage() {
         </div>
       </footer>
     </div>
+    </>
   );
 }

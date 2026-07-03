@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useStore } from '@/lib/store';
 import { formatCurrency } from '@/lib/utils';
+import { trackInitiateCheckout, trackPurchase } from '@/lib/metaPixel';
 import type { ShippingAddress } from '@/lib/types';
 
 export default function CheckoutContent() {
@@ -28,6 +29,19 @@ export default function CheckoutContent() {
   }, [productIds, products]);
 
   const totalAmount = cartItems.reduce((s, i) => s + i.totalPrice, 0);
+
+  // Track InitiateCheckout when checkout loads
+  useEffect(() => {
+    if (cartItems.length === 0) return;
+    trackInitiateCheckout({
+      content_ids: cartItems.map(i => i.productId),
+      content_name: cartItems.map(i => i.productName).join(', '),
+      content_type: 'product',
+      value: totalAmount,
+      currency: 'EUR',
+      num_items: cartItems.length,
+    });
+  }, [cartItems, totalAmount]);
 
   const [form, setForm] = useState<ShippingAddress>({ fullName: '', phone: '', street: '', city: '', province: '', postalCode: '' });
   const [paymentMethod, setPaymentMethod] = useState<'tarjeta' | 'contrareembolso'>('contrareembolso');
@@ -142,6 +156,15 @@ export default function CheckoutContent() {
         customerContact: form.phone,
         paymentMethod: paymentMethod === 'tarjeta' ? 'Tarjeta' : 'Contrareembolso',
         notes: `Pedido web #${newOrder.id.slice(0, 8)}. Envío: ${form.street}, ${form.city}, ${form.province}${notes ? '. ' + notes : ''}`,
+      });
+
+      // Track Purchase event for Meta Pixel
+      trackPurchase({
+        value: totalAmount,
+        currency: 'EUR',
+        content_ids: cartItems.map(i => i.productId),
+        content_type: 'product',
+        num_items: cartItems.length,
       });
 
       setSuccess(true);
