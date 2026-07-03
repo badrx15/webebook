@@ -14,6 +14,16 @@ interface RateOption {
   currency: string;
 }
 
+interface CarrierRates {
+  carrier: string;
+  rates: RateOption[];
+}
+
+interface RatesResponse {
+  rates: CarrierRates[];
+  errors: { carrier: string; error: string }[];
+}
+
 interface LabelResult {
   carrier: string;
   service: string;
@@ -44,7 +54,7 @@ export default function ShippingPage() {
   );
 
   const [ratesLoading, setRatesLoading] = useState<string | null>(null);
-  const [rates, setRates] = useState<Record<string, RateOption[]>>({});
+  const [rates, setRates] = useState<Record<string, RatesResponse>>({});
   const [ratesError, setRatesError] = useState<string | null>(null);
   const [generating, setGenerating] = useState<string | null>(null);
   const [generateError, setGenerateError] = useState<string | null>(null);
@@ -62,11 +72,6 @@ export default function ShippingPage() {
     cbl: 'CBL Logistics',
     mrw: 'MRW',
   };
-
-  const carrierId = useMemo(() => {
-    // Default carrier for Spain - user can change this
-    return process.env.NEXT_PUBLIC_DEFAULT_CARRIER || 'seur';
-  }, []);
 
   const getRates = async (order: Order) => {
     setRatesLoading(order.id);
@@ -119,10 +124,6 @@ export default function ShippingPage() {
               dimensions: { length: 30, width: 20, height: 10 },
             },
           ],
-          shipment: {
-            type: 1,
-            carrier: carrierId,
-          },
         }),
       });
 
@@ -134,7 +135,22 @@ export default function ShippingPage() {
         return;
       }
 
-      setRates(prev => ({ ...prev, [order.id]: result.data.data || [] }));
+      const ratesData: RatesResponse = result.data;
+
+      // Check if any rates were returned
+      const totalRates = ratesData.rates.reduce((sum, c) => sum + c.rates.length, 0);
+      if (totalRates === 0) {
+        const errorDetails = ratesData.errors
+          .map(e => `${carrierLabel[e.carrier] || e.carrier}: ${e.error}`)
+          .join(' | ');
+        setRatesError(
+          `Ningún transportista tiene tarifas para esta ruta. Detalles: ${errorDetails}`
+        );
+        setRatesLoading(null);
+        return;
+      }
+
+      setRates(prev => ({ ...prev, [order.id]: ratesData }));
       setRatesLoading(null);
     } catch (err: any) {
       setRatesError(err.message || 'Error de conexión');
@@ -356,68 +372,53 @@ export default function ShippingPage() {
                 </div>
               </div>
 
-              {/* Rates options */}
-              {rates[order.id] && rates[order.id].length > 0 && (
+              {/* Rates grouped by carrier */}
+              {rates[order.id] && rates[order.id].rates.length > 0 && (
                 <div className="mt-4 pt-4 border-t border-[var(--border)]">
                   <p className="text-sm font-semibold text-[var(--text-secondary)] mb-3 uppercase tracking-wider">
-                    Selecciona una tarifa:
+                    Tarifas disponibles:
                   </p>
-                  <div className="grid gap-2">
-                    {rates[order.id].map((rate, i) => (
-                      <div
-                        key={i}
-                        className="flex items-center justify-between p-3 rounded-lg border border-[var(--border)] bg-[var(--card-hover)]"
-                      >
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <span className="font-semibold text-sm">
-                              {carrierLabel[rate.carrier] || rate.carrier}
-                            </span>
-                            <span className="chip-blue text-xs">
-                              {rate.serviceDescription || rate.service}
-                            </span>
-                          </div>
-                          <p className="text-xs text-[var(--text-secondary)] mt-1">
-                            Entrega estimada: {rate.deliveryEstimate}
-                          </p>
-                        </div>
-                        <div className="text-right flex items-center gap-3">
-                          <span className="font-bold text-lg">
-                            {formatCurrency(parseFloat(rate.totalPrice), rate.currency === 'EUR' ? '€' : rate.currency)}
-                          </span>
-                          <button
-                            onClick={() => generateLabel(order, rate)}
-                            disabled={generating === order.id}
-                            className="btn-primary text-sm whitespace-nowrap"
-                          >
-                            {generating === order.id ? 'Generando...' : 'Generar etiqueta'}
-                          </button>
+                  <div className="grid gap-3">
+                    {rates[order.id].rates.map((carrierGroup, gi) => (
+                      <div key={gi}>
+                        <p className="text-xs font-semibold text-[var(--text-secondary)] mb-2 flex items-center gap-1.5">
+                          <span>{carrierLabel[carrierGroup.carrier] || carrierGroup.carrier}</span>
+                          <span className="chip-blue text-[10px]">{carrierGroup.rates.length} servicio(s)</span>
+                        </p>
+                        <div className="space-y-2">
+                          {carrierGroup.rates.map((rate, ri) => (
+                            <div
+                              key={ri}
+                              className="flex items-center justify-between p-3 rounded-lg border border-[var(--border)] bg-[var(--card-hover)]"
+                            >
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2">
+                                  <span className="chip-blue text-xs">
+                                    {rate.serviceDescription || rate.service}
+                                  </span>
+                                </div>
+                                <p className="text-xs text-[var(--text-secondary)] mt-1">
+                                  🚚 Entrega: {rate.deliveryEstimate || 'No especificada'}
+                                </p>
+                              </div>
+                              <div className="text-right flex items-center gap-3">
+                                <span className="font-bold text-lg">
+                                  {formatCurrency(parseFloat(rate.totalPrice), rate.currency === 'EUR' ? '€' : rate.currency)}
+                                </span>
+                                <button
+                                  onClick={() => generateLabel(order, { ...rate, carrier: carrierGroup.carrier })}
+                                  disabled={generating === order.id}
+                                  className="btn-primary text-sm whitespace-nowrap"
+                                >
+                                  {generating === order.id ? 'Generando...' : 'Generar etiqueta'}
+                                </button>
+                              </div>
+                            </div>
+                          ))}
                         </div>
                       </div>
                     ))}
                   </div>
-                </div>
-              )}
-
-              {/* No rates */}
-              {rates[order.id] && rates[order.id].length === 0 && (
-                <div className="mt-4 pt-4 border-t border-[var(--border)]">
-                  <p className="text-sm text-amber-600">
-                    No hay tarifas disponibles para este pedido con el transportista seleccionado.
-                    {' '}
-                    <button
-                      onClick={() => {
-                        setRates(prev => {
-                          const next = { ...prev };
-                          delete next[order.id];
-                          return next;
-                        });
-                      }}
-                      className="underline font-medium"
-                    >
-                      Intentar de nuevo
-                    </button>
-                  </p>
                 </div>
               )}
             </div>

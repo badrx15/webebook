@@ -6,10 +6,13 @@ const ENVIA_BASE_URL = process.env.ENVIA_ENV === 'production'
 
 export const dynamic = 'force-dynamic';
 
-async function callEnvia(endpoint: string, body: any) {
+// Spanish carriers ordered by popularity
+const SPAIN_CARRIERS = ['seur', 'correos', 'gls', 'mrw', 'dhl', 'cbl', 'asm'];
+
+async function callEnvia(endpoint: string, body: any): Promise<any> {
   const apiKey = process.env.ENVIA_API_KEY;
   if (!apiKey) {
-    throw new Error('ENVIA_API_KEY no configurada. Añádela en las variables de entorno.');
+    throw new Error('ENVIA_API_KEY no configurada. Añádela en las variables de entorno de Vercel.');
   }
 
   const res = await fetch(`${ENVIA_BASE_URL}${endpoint}`, {
@@ -24,7 +27,12 @@ async function callEnvia(endpoint: string, body: any) {
   const data = await res.json();
 
   if (!res.ok) {
-    throw new Error(data.message || data.error || `Error de Envia (${res.status})`);
+    // Extract meaningful error from Envia response
+    const errorMsg = data?.message 
+      || data?.error 
+      || (typeof data === 'string' ? data : null)
+      || `Error de Envia (${res.status})`;
+    return { error: errorMsg, httpStatus: res.status };
   }
 
   return data;
@@ -32,7 +40,7 @@ async function callEnvia(endpoint: string, body: any) {
 
 export async function POST(request: NextRequest) {
   try {
-    const { action, ...params } = await request.json();
+    const { action, carriers, ...params } = await request.json();
 
     if (!action) {
       return NextResponse.json(
@@ -41,27 +49,69 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    let result;
-
     switch (action) {
       case 'rate': {
-        // Get rates from Envia
-        result = await callEnvia('/ship/rate/', params);
-        break;
+        // Determine which carriers to query
+        const carriersToTry = carriers && carriers.length > 0 ? carriers : SPAIN_CARRIERS;
+
+        // Query all carriers in parallel
+        const results = await Promise.allSettled(
+          (carriersToTry as string[]).map((carrier: string) =>
+            callEnvia('/ship/rate/', {
+              ...params,
+              shipment: { ...params.shipment, carrier },
+            }).then((data: any) => ({ carrier, data }))
+          )
+        );
+
+        // Collect all successful rates with their carrier info
+        const allRates: { carrier: string; rates: any[]; error?: string }[] = [];
+        const errors: { carrier: string; error: string }[] = [];
+
+        for (const result of results) {
+          if (result.status === 'fulfilled') {
+            const { carrier, data } = result.value;
+            if (data.error) {
+              errors.push({ carrier, error: data.error });
+            } else if (data.data && Array.isArray(data.data) && data.data.length > 0) {
+              allRates.push({ carrier, rates: data.data });
+            } else {
+              errors.push({ carrier, error: 'Sin tarifas disponibles' });
+            }
+          } else {
+            errors.push({ carrier: 'unknown', error: result.reason?.message || 'Error de conexión' });
+          }
+        }
+
+        return NextResponse.json({
+          success: true,
+          data: {
+            rates: allRates,
+            errors,
+          },
+        });
       }
+
       case 'generate': {
-        // Generate shipping label
-        result = await callEnvia('/ship/generate/', params);
-        break;
+        // Generate label with the specific carrier/service selected
+        const result = await callEnvia('/ship/generate/', params);
+
+        if (result.error) {
+          return NextResponse.json(
+            { success: false, error: result.error },
+            { status: result.httpStatus || 500 }
+          );
+        }
+
+        return NextResponse.json({ success: true, data: result });
       }
+
       default:
         return NextResponse.json(
           { success: false, error: `Acción desconocida: ${action}` },
           { status: 400 }
         );
     }
-
-    return NextResponse.json({ success: true, data: result });
   } catch (error: any) {
     console.error('Error en API Envia:', error);
     return NextResponse.json(
