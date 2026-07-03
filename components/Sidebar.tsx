@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { useTheme } from '@/lib/theme';
 import { useStore } from '@/lib/store';
+import { useOrderNotifications } from '@/lib/order-notification-context';
 
 const NAV_ITEMS = [
   { href: '/admin', label: 'Dashboard', icon: '📊' },
@@ -20,6 +21,7 @@ export default function Sidebar() {
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
   const { canUndo, undo } = useStore();
+  const { pendingCount } = useOrderNotifications();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
@@ -84,6 +86,11 @@ export default function Sidebar() {
               >
                 <span className="text-lg">{item.icon}</span>
                 <span>{item.label}</span>
+                {item.href === '/admin/orders' && pendingCount > 0 && (
+                  <span className="ml-auto bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full min-w-[20px] text-center animate-pulse">
+                    {pendingCount}
+                  </span>
+                )}
                 {isActive && (
                   <span className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-400" />
                 )}
