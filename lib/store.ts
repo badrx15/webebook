@@ -93,23 +93,19 @@ export function useStore() {
   const adminInitialData = useAdminInitialData();
   const hasInitialData = adminInitialData !== null;
 
+  // Use initial data as starting point (fast instant display)
   const [data, setData] = useState<AppData>(hasInitialData ? adminInitialData : DEFAULT_DATA);
   const [loaded, setLoaded] = useState(hasInitialData);
   const [loading, setLoading] = useState(!hasInitialData);
   const dataRef = useRef<AppData>(hasInitialData ? adminInitialData : DEFAULT_DATA);
   const historyRef = useRef<AppData[]>([]);
   const [canUndo, setCanUndo] = useState(false);
+  // Track whether background fetch completed (to prevent race conditions)
+  const fetchCompleteRef = useRef(!hasInitialData);
 
-  // Load data from server on mount (only if no initial data was provided)
+  // Always fetch from server on mount to keep data in sync
+  // (initial data from context provides instant display while fetch completes)
   useEffect(() => {
-    if (hasInitialData) {
-      // Load history from localStorage even when using initial data
-      const history = loadHistory();
-      historyRef.current = history;
-      setCanUndo(history.length > 0);
-      return;
-    }
-
     let cancelled = false;
 
     (async () => {
@@ -122,6 +118,7 @@ export function useStore() {
       };
       setData(merged);
       dataRef.current = merged;
+      fetchCompleteRef.current = true;
       setLoaded(true);
       setLoading(false);
     })();
@@ -134,7 +131,7 @@ export function useStore() {
     return () => {
       cancelled = true;
     };
-  }, [hasInitialData]);
+  }, []);
 
   const pushToHistory = useCallback((currentData: AppData) => {
     const next = pushHistory(historyRef.current, currentData);
@@ -144,8 +141,8 @@ export function useStore() {
   }, []);
 
   const mutate = useCallback((updater: (prev: AppData) => AppData) => {
-    // Ignore mutations until data is loaded from server
-    if (!loaded) return;
+    // Ignore mutations until data is loaded and background fetch completed
+    if (!loaded || !fetchCompleteRef.current) return;
 
     const prev = dataRef.current;
     pushToHistory(prev);
