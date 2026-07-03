@@ -231,7 +231,19 @@ export function useStore() {
   }, [mutate]);
 
   const deleteSale = useCallback((id: string) => {
-    mutate(prev => ({ ...prev, sales: prev.sales.filter(s => s.id !== id) }));
+    mutate(prev => {
+      const saleToDelete = prev.sales.find(s => s.id === id);
+      // Check if the sale is linked to a web order (notes contain "Pedido web #")
+      const orderRef = saleToDelete?.notes?.match(/Pedido web #([a-z0-9]+)/)?.[1];
+      return {
+        ...prev,
+        sales: prev.sales.filter(s => s.id !== id),
+        // If linked to an order, delete that order too
+        orders: orderRef
+          ? prev.orders.filter(o => !o.id.startsWith(orderRef))
+          : prev.orders,
+      };
+    });
   }, [mutate]);
 
   // --- Expenses ---
@@ -286,7 +298,13 @@ export function useStore() {
   }, [mutate]);
 
   const deleteOrder = useCallback((id: string) => {
-    mutate(prev => ({ ...prev, orders: prev.orders.filter(o => o.id !== id) }));
+    const shortId = id.slice(0, 8);
+    mutate(prev => ({
+      ...prev,
+      orders: prev.orders.filter(o => o.id !== id),
+      // Also delete the linked sale (notes contain "Pedido web #XXXXYYYY")
+      sales: prev.sales.filter(s => !s.notes?.includes(`Pedido web #${shortId}`)),
+    }));
   }, [mutate]);
 
   // --- Reset ---
