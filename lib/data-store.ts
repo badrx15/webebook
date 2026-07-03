@@ -57,6 +57,7 @@ const BLOB_OPTIONS = {
   access: 'private' as const,
   contentType: 'application/json' as const,
   addRandomSuffix: false,
+  allowOverwrite: true,
 };
 
 async function getFromBlob(): Promise<AppData> {
