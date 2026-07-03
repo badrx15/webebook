@@ -47,11 +47,12 @@ export default function ProductsPage() {
     sellingPrice: 0,
     sku: '',
     stock: 0,
+    image: '',
   });
 
   const openNew = () => {
     setEditingProduct(null);
-    setForm({ name: '', description: '', category: 'Otra', costPrice: 0, sellingPrice: 0, sku: '', stock: 0 });
+    setForm({ name: '', description: '', category: 'Otra', costPrice: 0, sellingPrice: 0, sku: '', stock: 0, image: '' });
     setShowModal(true);
   };
 
@@ -65,8 +66,29 @@ export default function ProductsPage() {
       sellingPrice: p.sellingPrice,
       sku: p.sku,
       stock: p.stock,
+      image: p.image || '',
     });
     setShowModal(true);
+  };
+
+  // Image upload handler (converts to base64)
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      alert('Solo se permiten imágenes (JPG, PNG, WEBP)');
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      alert('La imagen no debe superar 2MB');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const dataUrl = ev.target?.result as string;
+      setForm(f => ({ ...f, image: dataUrl }));
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -336,6 +358,33 @@ export default function ProductsPage() {
                 className="input-field"
                 placeholder="0"
               />
+            </div>
+            <div className="sm:col-span-2">
+              <label className="label">Foto del producto</label>
+              <div className="flex items-start gap-4">
+                <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 border-dashed border-gray-300 hover:border-red-300 hover:bg-red-50 transition-all text-sm text-gray-600 hover:text-red-700">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <span>{form.image ? 'Cambiar foto' : 'Subir foto'}</span>
+                  <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+                </label>
+                {form.image && (
+                  <button
+                    type="button"
+                    onClick={() => setForm(f => ({ ...f, image: '' }))}
+                    className="text-sm text-red-500 hover:text-red-700"
+                  >
+                    Eliminar
+                  </button>
+                )}
+              </div>
+              {form.image && (
+                <div className="mt-3 relative w-32 h-32 rounded-xl overflow-hidden border border-gray-200 bg-gray-50">
+                  <img src={form.image} alt="Vista previa" className="w-full h-full object-cover" />
+                </div>
+              )}
+              <p className="text-xs text-gray-400 mt-2">Máximo 2MB. Formatos: JPG, PNG, WEBP</p>
             </div>
           </div>
 

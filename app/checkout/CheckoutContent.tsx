@@ -17,11 +17,11 @@ export default function CheckoutContent() {
   const productIds = searchParams.get('products')?.split(',') || [];
 
   const cartItems = useMemo(() => {
-    const items: { productId: string; quantity: number; productName: string; unitPrice: number; totalPrice: number }[] = [];
+    const items: { productId: string; quantity: number; productName: string; unitPrice: number; totalPrice: number; productImage?: string }[] = [];
     productIds.forEach(pid => {
       const product = products.find(p => p.id === pid);
       if (product) {
-        items.push({ productId: product.id, quantity: 1, productName: product.name, unitPrice: product.sellingPrice, totalPrice: product.sellingPrice });
+        items.push({ productId: product.id, quantity: 1, productName: product.name, unitPrice: product.sellingPrice, totalPrice: product.sellingPrice, productImage: product.image });
       }
     });
     return items;
@@ -315,7 +315,11 @@ export default function CheckoutContent() {
                 {cartItems.map((item, i) => (
                   <div key={i} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
                     <div className="flex items-center gap-3">
-                      <span className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center text-sm">🐷</span>
+                      {item.productImage ? (
+                        <img src={item.productImage} alt={item.productName} className="w-10 h-10 rounded-lg object-cover border border-gray-100" />
+                      ) : (
+                        <span className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-sm">🐷</span>
+                      )}
                       <div>
                         <p className="font-medium text-gray-900 text-sm">{item.productName}</p>
                         <p className="text-xs text-gray-500">Cant: {item.quantity}</p>

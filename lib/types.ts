@@ -7,6 +7,7 @@ export interface Product {
   sellingPrice: number; // Precio de venta
   sku: string;
   stock: number;
+  image?: string;       // URL o data URI (base64) de la imagen del producto
   createdAt: string;
   updatedAt: string;
 }

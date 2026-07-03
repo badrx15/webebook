@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { useStore } from '@/lib/store';
 import { formatCurrency } from '@/lib/utils';
@@ -10,10 +10,6 @@ export default function LandingPage() {
   const { data } = useStore();
   const { products, settings } = data;
   const currencySymbol = settings.currencySymbol;
-
-  // Separate featured product (first one) and rest
-  const featuredProduct = products[0] || null;
-  const otherProducts = products.slice(1);
 
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
 
@@ -165,89 +161,55 @@ export default function LandingPage() {
               <p className="text-sm text-gray-400">Próximamente disponibles</p>
             </div>
           ) : (
-            <div className="space-y-16">
-              {/* Featured Product */}
-              <div className="grid lg:grid-cols-2 gap-12 items-center bg-gradient-to-br from-red-50 to-amber-50 rounded-3xl p-8 lg:p-12">
-                <div className="space-y-6">
-                  <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-red-200 text-red-800 text-xs font-bold uppercase tracking-wider">
-                    ⭐ Producto Destacado
-                  </span>
-                  <h3 className="text-3xl font-bold text-gray-900">{featuredProduct!.name}</h3>
-                  <p className="text-gray-600 leading-relaxed">{featuredProduct!.description || 'Jamón ibérico de la mejor calidad, cortado a cuchillo y envasado al vacío.'}</p>
-                  <ul className="space-y-2">
-                    {[
-                      'Cortado a cuchillo en lascas finas',
-                      'Envasado al vacío para máxima frescura',
-                      'Envío gratuito en 24/48h',
-                    ].map((item, i) => (
-                      <li key={i} className="flex items-center gap-3 text-sm text-gray-700">
-                        <svg className="w-5 h-5 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+              {products.map(product => (
+                <div key={product.id} className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl hover:border-red-100 transition-all duration-300">
+                  {/* Image */}
+                  <div className="relative aspect-square bg-gradient-to-br from-red-50 to-amber-50 overflow-hidden">
+                    {product.image ? (
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <span className="text-7xl sm:text-8xl">🥩</span>
+                      </div>
+                    )}
+                    {/* Badge */}
+                    <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 text-xs font-bold text-red-700 shadow-sm">
+                      Envío gratis
+                    </div>
+                    {products.indexOf(product) === 0 && (
+                      <div className="absolute top-3 right-3 bg-red-700 text-white rounded-full px-3 py-1 text-xs font-bold shadow-lg">
+                        Más vendido
+                      </div>
+                    )}
+                  </div>
+                  {/* Content */}
+                  <div className="p-5">
+                    <h3 className="text-base font-bold text-gray-900 leading-tight">{product.name}</h3>
+                    <p className="text-sm text-gray-500 mt-1.5 line-clamp-2 leading-relaxed">
+                      {product.description || 'Jamón ibérico de la mejor calidad, cortado a cuchillo y envasado al vacío.'}
+                    </p>
+                    <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
+                      <div>
+                        <p className="text-xs text-gray-400">Precio</p>
+                        <p className="text-xl font-bold text-red-700">{formatCurrency(product.sellingPrice, currencySymbol)}</p>
+                      </div>
+                      <Link href={`/checkout?products=${product.id}`}
+                        className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-red-700 text-white text-sm font-semibold
+                                   hover:bg-red-800 transition-all shadow-lg shadow-red-700/25 group-hover:shadow-red-700/40 active:scale-95">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
                         </svg>
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                  <div className="flex items-center gap-6 pt-4">
-                    <div>
-                      <p className="text-sm text-gray-500">Precio</p>
-                      <p className="text-4xl font-bold text-red-700">
-                        {formatCurrency(featuredProduct!.sellingPrice, currencySymbol)}
-                      </p>
-                    </div>
-                    <Link href={`/checkout?products=${featuredProduct!.id}`}
-                      className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-red-700 text-white font-bold text-lg
-                                 hover:bg-red-800 transition-all shadow-xl shadow-red-700/25 hover:shadow-red-700/40 active:scale-95">
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
-                      </svg>
-                      Comprar ahora
-                    </Link>
-                  </div>
-                </div>
-                <div className="flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="text-8xl sm:text-9xl mb-4">🥩</div>
-                    <div className="grid grid-cols-3 gap-4 mt-6">
-                      <div className="bg-white/80 rounded-xl p-4 text-center">
-                        <p className="text-2xl font-bold text-gray-900">24</p>
-                        <p className="text-xs text-gray-500">Meses cura</p>
-                      </div>
-                      <div className="bg-white/80 rounded-xl p-4 text-center">
-                        <p className="text-2xl font-bold text-gray-900">75%</p>
-                        <p className="text-xs text-gray-500">Raza Ibérica</p>
-                      </div>
-                      <div className="bg-white/80 rounded-xl p-4 text-center">
-                        <p className="text-2xl font-bold text-gray-900">100g</p>
-                        <p className="text-xs text-gray-500">Por sobre</p>
-                      </div>
+                        Comprar
+                      </Link>
                     </div>
                   </div>
                 </div>
-              </div>
-
-              {/* Other products */}
-              {otherProducts.length > 0 && (
-                <div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-8 text-center">Más productos</h3>
-                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {otherProducts.map(product => (
-                      <div key={product.id} className="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-lg transition-shadow">
-                        <div className="text-5xl mb-4">🥩</div>
-                        <h4 className="text-lg font-bold text-gray-900">{product.name}</h4>
-                        <p className="text-sm text-gray-500 mt-1 line-clamp-2">{product.description || 'Producto ibérico de alta calidad.'}</p>
-                        <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
-                          <p className="text-2xl font-bold text-red-700">{formatCurrency(product.sellingPrice, currencySymbol)}</p>
-                          <Link href={`/checkout?products=${product.id}`}
-                            className="inline-flex items-center gap-1 px-4 py-2 rounded-full bg-red-700 text-white text-sm font-semibold hover:bg-red-800 transition-all">
-                            Comprar
-                          </Link>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+              ))}
             </div>
           )}
         </div>
