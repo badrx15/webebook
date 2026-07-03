@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { prepareEnviaAddress } from '@/lib/envia';
 
 const ENVIA_BASE_URL = process.env.ENVIA_ENV === 'production'
   ? 'https://api.envia.com'
@@ -73,11 +74,17 @@ export async function POST(request: NextRequest) {
         // Determine which carriers to query
         const carriersToTry = carriers && carriers.length > 0 ? carriers : SPAIN_CARRIERS;
 
+        // Normalize provinces to Envia codes
+        const origin = params.origin ? prepareEnviaAddress(params.origin) : params.origin;
+        const destination = params.destination ? prepareEnviaAddress(params.destination) : params.destination;
+
         // Query all carriers in parallel
         const results = await Promise.allSettled(
           (carriersToTry as string[]).map((carrier: string) =>
             callEnvia('/ship/rate/', {
               ...params,
+              origin,
+              destination,
               shipment: { ...params.shipment, carrier },
             }).then((data: any) => ({ carrier, data }))
           )
@@ -112,8 +119,16 @@ export async function POST(request: NextRequest) {
       }
 
       case 'generate': {
+        // Normalize provinces to Envia codes
+        const origin = params.origin ? prepareEnviaAddress(params.origin) : params.origin;
+        const destination = params.destination ? prepareEnviaAddress(params.destination) : params.destination;
+
         // Generate label with the specific carrier/service selected
-        const result = await callEnvia('/ship/generate/', params);
+        const result = await callEnvia('/ship/generate/', {
+          ...params,
+          origin,
+          destination,
+        });
 
         if (result.error) {
           return NextResponse.json(
