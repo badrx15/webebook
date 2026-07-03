@@ -141,7 +141,7 @@ export default function ShippingPage() {
       const totalRates = ratesData.rates.reduce((sum, c) => sum + c.rates.length, 0);
       if (totalRates === 0) {
         const errorDetails = ratesData.errors
-          .map(e => `${carrierLabel[e.carrier] || e.carrier}: ${e.error}`)
+          .map(e => `${carrierLabel[e.carrier] || e.carrier}: ${typeof e.error === 'string' ? e.error : JSON.stringify(e.error)}`)
           .join(' | ');
         setRatesError(
           `Ningún transportista tiene tarifas para esta ruta. Detalles: ${errorDetails}`

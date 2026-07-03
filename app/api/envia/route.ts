@@ -9,6 +9,30 @@ export const dynamic = 'force-dynamic';
 // Spanish carriers ordered by popularity
 const SPAIN_CARRIERS = ['seur', 'correos', 'gls', 'mrw', 'dhl', 'cbl', 'asm'];
 
+// Try to extract a readable string from any error field (could be string, object, or nested)
+function extractError(data: any): string {
+  if (!data) return 'Error desconocido';
+  if (typeof data === 'string') return data;
+  if (typeof data.error === 'string') return data.error;
+  if (data.error?.message) return data.error.message;
+  if (data.error?.description) return data.error.description;
+  if (data.message) return data.message;
+  if (data.meta?.description) return data.meta.description;
+  if (Array.isArray(data.errors)) {
+    return data.errors
+      .map((e: any) => (typeof e === 'string' ? e : e.message || e.description || ''))
+      .filter(Boolean)
+      .join('; ');
+  }
+  // Last resort: try to JSON.stringify a single error object (not the whole response)
+  try {
+    if (typeof data.error === 'object') {
+      return JSON.stringify(data.error);
+    }
+  } catch {}
+  return `Error de Envia (código ${data.httpStatus || 'desconocido'})`;
+}
+
 async function callEnvia(endpoint: string, body: any): Promise<any> {
   const apiKey = process.env.ENVIA_API_KEY;
   if (!apiKey) {
@@ -27,12 +51,7 @@ async function callEnvia(endpoint: string, body: any): Promise<any> {
   const data = await res.json();
 
   if (!res.ok) {
-    // Extract meaningful error from Envia response
-    const errorMsg = data?.message 
-      || data?.error 
-      || (typeof data === 'string' ? data : null)
-      || `Error de Envia (${res.status})`;
-    return { error: errorMsg, httpStatus: res.status };
+    return { error: extractError(data), httpStatus: res.status };
   }
 
   return data;
