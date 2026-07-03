@@ -60,6 +60,7 @@ export default function ShippingPage() {
   const [generateError, setGenerateError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [showLabels, setShowLabels] = useState(false);
+  const [packageWeights, setPackageWeights] = useState<Record<string, 1 | 2>>({});
 
   const carrierLabel: Record<string, string> = {
     correos: 'Correos',
@@ -84,8 +85,8 @@ export default function ShippingPage() {
       return;
     }
 
-    // Calculate total weight (estimate: 1kg per item)
-    const totalWeight = order.items.reduce((sum, item) => sum + item.quantity, 1);
+    // Use selected package weight (default 1kg)
+    const packageWeight = packageWeights[order.id] || 1;
     const totalValue = order.totalAmount;
 
     try {
@@ -120,7 +121,7 @@ export default function ShippingPage() {
               declaredValue: totalValue,
               lengthUnit: 'CM',
               weightUnit: 'KG',
-              weight: totalWeight,
+              weight: packageWeight,
               dimensions: { length: 30, width: 20, height: 10 },
             },
           ],
@@ -169,7 +170,8 @@ export default function ShippingPage() {
       return;
     }
 
-    const totalWeight = order.items.reduce((sum, item) => sum + item.quantity, 1);
+    // Use selected package weight (default 1kg)
+    const packageWeight = packageWeights[order.id] || 1;
     const totalValue = order.totalAmount;
 
     try {
@@ -204,7 +206,7 @@ export default function ShippingPage() {
               declaredValue: totalValue,
               lengthUnit: 'CM',
               weightUnit: 'KG',
-              weight: totalWeight,
+              weight: packageWeight,
               dimensions: { length: 30, width: 20, height: 10 },
             },
           ],
@@ -359,15 +361,40 @@ export default function ShippingPage() {
                     </p>
                   </div>
 
-                  {/* Get rates button */}
+                  {/* Package weight selector */}
                   {!rates[order.id] && (
-                    <button
-                      onClick={() => getRates(order)}
-                      disabled={ratesLoading === order.id || !settings.originAddress?.street}
-                      className="btn-primary text-sm"
-                    >
-                      {ratesLoading === order.id ? 'Consultando tarifas...' : '📦 Obtener tarifas'}
-                    </button>
+                    <div className="space-y-2">
+                      <p className="text-xs text-[var(--text-secondary)] font-medium text-center">Peso del paquete</p>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => setPackageWeights(prev => ({ ...prev, [order.id]: 1 }))}
+                          className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium border transition-all ${
+                            (packageWeights[order.id] || 1) === 1
+                              ? 'border-blue-500 bg-blue-50 text-blue-700'
+                              : 'border-[var(--border)] text-[var(--text-secondary)] hover:border-blue-300'
+                          }`}
+                        >
+                          1 kg
+                        </button>
+                        <button
+                          onClick={() => setPackageWeights(prev => ({ ...prev, [order.id]: 2 }))}
+                          className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium border transition-all ${
+                            (packageWeights[order.id] || 1) === 2
+                              ? 'border-blue-500 bg-blue-50 text-blue-700'
+                              : 'border-[var(--border)] text-[var(--text-secondary)] hover:border-blue-300'
+                          }`}
+                        >
+                          2 kg
+                        </button>
+                      </div>
+                      <button
+                        onClick={() => getRates(order)}
+                        disabled={ratesLoading === order.id || !settings.originAddress?.street}
+                        className="btn-primary text-sm w-full"
+                      >
+                        {ratesLoading === order.id ? 'Consultando tarifas...' : '📦 Obtener tarifas'}
+                      </button>
+                    </div>
                   )}
                 </div>
               </div>
