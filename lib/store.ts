@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import type { AppData, Product, Sale, Expense, BusinessSettings, Order, OrderItem, ShippingAddress, OrderStatus } from './types';
+import { useAdminInitialData } from './admin-store-context';
 
 const DEFAULT_SETTINGS: BusinessSettings = {
   businessName: 'Mi Negocio',
@@ -89,14 +90,26 @@ async function saveDataToServer(data: AppData): Promise<boolean> {
 }
 
 export function useStore() {
-  const [data, setData] = useState<AppData>(DEFAULT_DATA);
-  const [loaded, setLoaded] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const dataRef = useRef<AppData>(DEFAULT_DATA);
+  const adminInitialData = useAdminInitialData();
+  const hasInitialData = adminInitialData !== null;
+
+  const [data, setData] = useState<AppData>(hasInitialData ? adminInitialData : DEFAULT_DATA);
+  const [loaded, setLoaded] = useState(hasInitialData);
+  const [loading, setLoading] = useState(!hasInitialData);
+  const dataRef = useRef<AppData>(hasInitialData ? adminInitialData : DEFAULT_DATA);
   const historyRef = useRef<AppData[]>([]);
   const [canUndo, setCanUndo] = useState(false);
-  // Load data from server on mount
+
+  // Load data from server on mount (only if no initial data was provided)
   useEffect(() => {
+    if (hasInitialData) {
+      // Load history from localStorage even when using initial data
+      const history = loadHistory();
+      historyRef.current = history;
+      setCanUndo(history.length > 0);
+      return;
+    }
+
     let cancelled = false;
 
     (async () => {
@@ -121,7 +134,7 @@ export function useStore() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [hasInitialData]);
 
   const pushToHistory = useCallback((currentData: AppData) => {
     const next = pushHistory(historyRef.current, currentData);
