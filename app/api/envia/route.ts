@@ -139,10 +139,15 @@ export async function POST(request: NextRequest) {
         const destination = params.destination ? prepareEnviaAddress(params.destination) : params.destination;
 
         // Generate label with the specific carrier/service selected
+        // Envia requires 'settings' with label format and size
         const result = await callEnvia('/ship/generate/', {
           ...params,
           origin,
           destination,
+          settings: {
+            printFormat: 'PDF',
+            printSize: 'STOCK_4X6',
+          },
         });
 
         if (result.error) {
