@@ -43,7 +43,7 @@ export default function CheckoutContent() {
     });
   }, [cartItems, totalAmount]);
 
-  const [form, setForm] = useState<ShippingAddress>({ fullName: '', phone: '', street: '', city: '', province: '', postalCode: '' });
+  const [form, setForm] = useState<ShippingAddress>({ fullName: '', phone: '', email: '', street: '', city: '', province: '', postalCode: '' });
   const [paymentMethod, setPaymentMethod] = useState<'tarjeta' | 'contrareembolso'>('contrareembolso');
   const [notes, setNotes] = useState('');
   const [loading, setLoading] = useState(false);
@@ -244,6 +244,13 @@ export default function CheckoutContent() {
                     className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-red-300 focus:ring-2 focus:ring-red-100 outline-none text-base"
                     placeholder="Ej: 612 345 678" required />
                   <p className="text-xs text-gray-400 mt-1">Te llamaremos si hay alguna duda</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <input type="email" value={form.email || ''} onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-red-300 focus:ring-2 focus:ring-red-100 outline-none text-base"
+                    placeholder="Ej: cliente@email.com" />
+                  <p className="text-xs text-gray-400 mt-1">Necesario para recibir notificaciones de envío</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Calle y número *</label>

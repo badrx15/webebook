@@ -45,6 +45,7 @@ export type PaymentMethod = 'Efectivo' | 'Transferencia' | 'Tarjeta' | 'PayPal' 
 export interface ShippingAddress {
   fullName: string;
   phone: string;
+  email?: string;
   street: string;
   city: string;
   province: string;

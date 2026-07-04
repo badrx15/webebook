@@ -108,6 +108,7 @@ export default function ShippingPage() {
           destination: {
             name: order.shippingAddress.fullName,
             phone: order.shippingAddress.phone,
+            email: order.shippingAddress.email || '',
             street: order.shippingAddress.street,
             city: order.shippingAddress.city,
             state: order.shippingAddress.province,
@@ -203,6 +204,7 @@ export default function ShippingPage() {
           destination: {
             name: order.shippingAddress.fullName,
             phone: order.shippingAddress.phone,
+            email: order.shippingAddress.email || '',
             street: order.shippingAddress.street,
             city: order.shippingAddress.city,
             state: order.shippingAddress.province,
