@@ -15,6 +15,7 @@ const DEFAULT_SETTINGS: BusinessSettings = {
     fullName: '',
     phone: '',
     street: '',
+    number: '',
     city: '',
     province: '',
     postalCode: '',

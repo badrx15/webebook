@@ -115,6 +115,7 @@ export interface OriginAddress {
   fullName: string;
   phone: string;
   street: string;
+  number?: string;
   city: string;
   province: string;
   postalCode: string;

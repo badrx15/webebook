@@ -117,19 +117,54 @@ export function getEnviaProvinceCode(provinceName: string): string {
 }
 
 /**
- * Prepares an address object for Envia API by normalizing the province field.
+ * Extract the street number from a full street address string.
+ * Envia expects `street` (name only) and `number` as separate fields.
+ *
+ * Examples:
+ *   "calle pozo 2"              → { street: "calle pozo", number: "2" }
+ *   "camino lateral bajo 65"    → { street: "camino lateral bajo", number: "65" }
+ *   "Av. de la Constitución, 45" → { street: "Av. de la Constitución", number: "45" }
+ *   "Plaza Mayor"               → { street: "Plaza Mayor", number: "" }
+ */
+export function splitStreetAddress(fullStreet: string): { street: string; number: string } {
+  const s = fullStreet.trim();
+  if (!s) return { street: '', number: '' };
+
+  // Try "street, number" (comma-separated)
+  const commaMatch = s.match(/^(.+?),\s*(\d+)\s*$/);
+  if (commaMatch) return { street: commaMatch[1].trim(), number: commaMatch[2] };
+
+  // Try "street number" (last number at end)
+  const endMatch = s.match(/^(.+?)\s+(\d+)\s*$/);
+  if (endMatch) return { street: endMatch[1].trim(), number: endMatch[2] };
+
+  return { street: s, number: '' };
+}
+
+/**
+ * Prepares an address object for Envia API by:
+ * - Separating street into street name and number
+ * - Normalizing province to Envia state codes
  */
 export function prepareEnviaAddress(address: {
   name: string;
   phone: string;
   street: string;
+  number?: string;
   city: string;
   state: string;
   country: string;
   postalCode: string;
 }) {
+  // If number is explicitly provided, use it; otherwise extract from street
+  const { street, number } = address.number
+    ? { street: address.street, number: address.number }
+    : splitStreetAddress(address.street);
+
   return {
     ...address,
+    street,
+    number,
     state: getEnviaProvinceCode(address.state),
   };
 }

@@ -97,10 +97,16 @@ export default function SettingsPage() {
                 className="input-field" placeholder="Tu nombre o empresa" />
             </div>
             <div className="sm:col-span-2">
-              <label className="label">Dirección (calle, número, piso)</label>
+              <label className="label">Calle</label>
               <input type="text" value={form.originAddress?.street || ''}
-                onChange={e => setForm(f => ({ ...f, originAddress: { ...f.originAddress || { fullName: '', phone: '', city: '', province: '', postalCode: '', country: 'ES' }, street: e.target.value } }))}
-                className="input-field" placeholder="Ej: Calle Mayor, 15, 2ºB" />
+                onChange={e => setForm(f => ({ ...f, originAddress: { ...f.originAddress || { fullName: '', phone: '', number: '', city: '', province: '', postalCode: '', country: 'ES' }, street: e.target.value } }))}
+                className="input-field" placeholder="Ej: Calle Mayor" />
+            </div>
+            <div>
+              <label className="label">Número</label>
+              <input type="text" value={form.originAddress?.number || ''}
+                onChange={e => setForm(f => ({ ...f, originAddress: { ...f.originAddress || { fullName: '', phone: '', street: '', city: '', province: '', postalCode: '', country: 'ES' }, number: e.target.value } }))}
+                className="input-field" placeholder="Ej: 15" />
             </div>
             <div>
               <label className="label">Ciudad</label>
