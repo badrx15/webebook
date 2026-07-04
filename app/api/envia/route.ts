@@ -10,6 +10,12 @@ export const dynamic = 'force-dynamic';
 // Spanish carriers ordered by popularity
 const SPAIN_CARRIERS = ['seur', 'correos', 'gls', 'mrw', 'dhl', 'cbl', 'asm'];
 
+// Services that require carrier-specific configuration (branch codes, etc.)
+// and cannot be used without additional setup
+const UNSUPPORTED_SERVICES: Record<string, string[]> = {
+  seur: ['b2c'],
+};
+
 // Try to extract a readable string from any error field (could be string, object, or nested)
 function extractError(data: any): string {
   if (!data) return 'Error desconocido';
@@ -107,9 +113,12 @@ export async function POST(request: NextRequest) {
             if (data.error) {
               errors.push({ carrier, error: data.error });
             } else if (data.data && Array.isArray(data.data) && data.data.length > 0) {
-              // Filter out error objects that Envia sometimes returns as rate items
+              // Filter out error objects and services that require carrier-specific config
+              // (e.g., SEUR b2c requires origin branch code)
+              const blocked = UNSUPPORTED_SERVICES[carrier] || [];
               const validRates = data.data.filter((r: any) =>
                 r && typeof r === 'object' && !r.code && !r.error && r.service
+                && !blocked.includes(r.service)
               );
               if (validRates.length > 0) {
                 allRates.push({ carrier, rates: validRates });
