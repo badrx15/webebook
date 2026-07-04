@@ -138,7 +138,9 @@ export default function ShippingPage() {
       }
 
       if (!result.success) {
-        setRatesError(result.error || `Error del servidor (HTTP ${res.status})`);
+        const errMsg = typeof result.error === 'string' ? result.error :
+          result.error?.message || result.error?.description || JSON.stringify(result.error);
+        setRatesError(errMsg || `Error del servidor (HTTP ${res.status})`);
         setRatesLoading(null);
         return;
       }
@@ -235,12 +237,22 @@ export default function ShippingPage() {
       }
 
       if (!result.success) {
-        setGenerateError(result.error || `Error del servidor (HTTP ${res.status})`);
+        const errMsg = typeof result.error === 'string' ? result.error :
+          result.error?.message || result.error?.description || JSON.stringify(result.error);
+        setGenerateError(errMsg || `Error del servidor (HTTP ${res.status})`);
         setGenerating(null);
         return;
       }
 
-      const labelData: LabelResult = result.data.data[0];
+      // Safe access to label data (Envia response format may vary)
+      const labelArray = result.data?.data || result.data?.labels || [];
+      const labelData: LabelResult | undefined = Array.isArray(labelArray) ? labelArray[0] : labelArray;
+
+      if (!labelData || !labelData.trackingNumber) {
+        setGenerateError('Respuesta inesperada de Envia: no se encontraron datos de la etiqueta.');
+        setGenerating(null);
+        return;
+      }
 
       // Update order with tracking data and status
       updateOrderTracking(order.id, {

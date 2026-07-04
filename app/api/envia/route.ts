@@ -107,7 +107,15 @@ export async function POST(request: NextRequest) {
             if (data.error) {
               errors.push({ carrier, error: data.error });
             } else if (data.data && Array.isArray(data.data) && data.data.length > 0) {
-              allRates.push({ carrier, rates: data.data });
+              // Filter out error objects that Envia sometimes returns as rate items
+              const validRates = data.data.filter((r: any) =>
+                r && typeof r === 'object' && !r.code && !r.error && r.service
+              );
+              if (validRates.length > 0) {
+                allRates.push({ carrier, rates: validRates });
+              } else {
+                errors.push({ carrier, error: 'Sin tarifas disponibles para este transportista' });
+              }
             } else {
               errors.push({ carrier, error: 'Sin tarifas disponibles' });
             }

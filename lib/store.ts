@@ -49,12 +49,13 @@ function loadHistory(): AppData[] {
   }
 }
 
-function saveHistory(history: AppData[]): void {
-  if (typeof window === 'undefined') return;
+function saveHistory(history: AppData[]): boolean {
+  if (typeof window === 'undefined') return true;
   try {
     localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+    return true;
   } catch {
-    // Silently fail
+    return false;
   }
 }
 
@@ -150,8 +151,14 @@ export function useStore() {
   const pushToHistory = useCallback((currentData: AppData) => {
     const next = pushHistory(historyRef.current, currentData);
     historyRef.current = next;
-    saveHistory(next);
-    setCanUndo(next.length > 0);
+    const saved = saveHistory(next);
+    // If localStorage is full, trim history to last 10 and retry
+    if (!saved) {
+      const trimmed = next.slice(-10);
+      historyRef.current = trimmed;
+      saveHistory(trimmed); // if still fails, it'll silently fail - that's ok
+    }
+    setCanUndo(historyRef.current.length > 0);
   }, []);
 
   const enqueueSave = useCallback((newData: AppData) => {
