@@ -5,66 +5,25 @@ const ENVIA_BASE_URL = process.env.ENVIA_ENV === 'production'
   ? 'https://api.envia.com'
   : 'https://api-test.envia.com';
 
+const ENVIA_QUERIES_URL = process.env.ENVIA_ENV === 'production'
+  ? 'https://queries.envia.com'
+  : 'https://queries-test.envia.com';
+
 export const dynamic = 'force-dynamic';
 
 // Spanish carriers ordered by popularity
 const SPAIN_CARRIERS = ['seur', 'correos', 'gls', 'mrw', 'dhl', 'cbl', 'asm'];
 
-// SEUR branch codes for 'b2c' (branch-to-home) service by origin postal code prefix
-// Format: first 2 digits of postal code → SEUR branch code
-const SEUR_BRANCH_CODES: Record<string, string> = {
-  '01': '01001', // Vitoria
-  '02': '02001', // Albacete
-  '03': '03001', // Alicante
-  '04': '04001', // Almería
-  '06': '06001', // Badajoz
-  '07': '07001', // Palma
-  '08': '08001', // Barcelona
-  '09': '09001', // Burgos
-  '10': '10001', // Cáceres
-  '11': '11001', // Cádiz
-  '12': '12001', // Castellón
-  '13': '13001', // Ciudad Real
-  '14': '14001', // Córdoba
-  '15': '15001', // La Coruña
-  '16': '16001', // Cuenca
-  '17': '17001', // Girona
-  '18': '18001', // Granada
-  '19': '19001', // Guadalajara
-  '20': '20001', // San Sebastián
-  '21': '21001', // Huelva
-  '22': '22001', // Huesca
-  '23': '23001', // Jaén
-  '24': '24001', // León
-  '25': '25001', // Lleida
-  '26': '26001', // Logroño
-  '27': '27001', // Lugo
-  '28': '28001', // Madrid
-  '29': '29001', // Málaga
-  '30': '30001', // Murcia
-  '31': '31001', // Pamplona
-  '32': '32001', // Ourense
-  '33': '33001', // Oviedo
-  '34': '34001', // Palencia
-  '35': '35001', // Las Palmas
-  '36': '36001', // Pontevedra
-  '37': '37001', // Salamanca
-  '38': '38001', // Santa Cruz
-  '39': '39001', // Santander
-  '40': '40001', // Segovia
-  '41': '41001', // Sevilla
-  '42': '42001', // Soria
-  '43': '43001', // Tarragona
-  '44': '44001', // Teruel
-  '45': '45001', // Toledo
-  '46': '46001', // Valencia
-  '47': '47001', // Valladolid
-  '48': '48001', // Bilbao
-  '49': '49001', // Zamora
-  '50': '50001', // Zaragoza
-  '51': '51001', // Ceuta
-  '52': '52001', // Melilla
+// Services that require a branch code (drop-off / branch-to-home)
+const BRANCH_SERVICES: Record<string, string[]> = {
+  seur: ['b2c'],
 };
+
+function shipmentNeedsBranch(shipment: any): boolean {
+  if (!shipment?.carrier || !shipment?.service) return false;
+  const services = BRANCH_SERVICES[shipment.carrier];
+  return !!services && services.includes(shipment.service);
+}
 
 // Try to extract a readable string from any error field (could be string, object, or nested)
 function extractError(data: any): string {
@@ -88,6 +47,32 @@ function extractError(data: any): string {
     }
   } catch {}
   return `Error de Envia (código ${data.httpStatus || 'desconocido'})`;
+}
+
+// Fetch nearest carrier branch/origin for drop-off services (e.g. SEUR b2c)
+// Uses Envia Queries API: GET /branches/{carrier}/{country_code}?zipcode=...
+// Returns branch_code of the first (closest) branch, or null if none found
+async function fetchNearestBranch(carrier: string, country: string, postalCode: string): Promise<string | null> {
+  const apiKey = process.env.ENVIA_API_KEY;
+  if (!apiKey) return null;
+
+  try {
+    const url = `${ENVIA_QUERIES_URL}/branches/${carrier}/${country}?zipcode=${encodeURIComponent(postalCode)}&type=1`;
+    const res = await fetch(url, {
+      headers: { 'Authorization': `Bearer ${apiKey}` },
+    });
+
+    if (!res.ok) return null;
+
+    const data = await res.json();
+    if (data?.data && Array.isArray(data.data) && data.data.length > 0) {
+      // Return the branch_code of the first branch (closest match)
+      return data.data[0].branch_code || data.data[0].branch_id || null;
+    }
+    return null;
+  } catch {
+    return null;
+  }
 }
 
 async function callEnvia(endpoint: string, body: any): Promise<any> {
@@ -195,11 +180,16 @@ export async function POST(request: NextRequest) {
         const origin = params.origin ? prepareEnviaAddress(params.origin) : params.origin;
         const destination = params.destination ? prepareEnviaAddress(params.destination) : params.destination;
 
-        // For SEUR 'b2c' (branch-to-home), add the origin branch code
-        const shipment = { ...params.shipment };
-        if (shipment.carrier === 'seur' && shipment.service === 'b2c' && origin?.postalCode) {
-          const prefix = origin.postalCode.slice(0, 2);
-          shipment.branchCode = SEUR_BRANCH_CODES[prefix] || origin.postalCode;
+        // For drop-off services (e.g. SEUR 'b2c'), find the nearest origin branch
+        if (shipmentNeedsBranch(params.shipment) && origin?.postalCode) {
+          const branchCode = await fetchNearestBranch(params.shipment.carrier, origin.country, origin.postalCode);
+          if (!branchCode) {
+            return NextResponse.json({
+              success: false,
+              error: `No se encontró una sucursal de ${params.shipment.carrier} cercana al CP ${origin.postalCode}. Prueba con otro servicio de envío.`,
+            }, { status: 400 });
+          }
+          origin.branchCode = branchCode;
         }
 
         // Generate label with the specific carrier/service selected
@@ -208,7 +198,7 @@ export async function POST(request: NextRequest) {
           ...params,
           origin,
           destination,
-          shipment,
+          shipment: params.shipment,
           settings: {
             printFormat: 'PDF',
             printSize: 'STOCK_4X6',
