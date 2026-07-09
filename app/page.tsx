@@ -86,12 +86,6 @@ export default async function LandingPage() {
                 </div>
                 <div className="flex items-center gap-2 text-sm text-gray-500">
                   <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  Envío en 24/48h
-                </div>
-                <div className="flex items-center gap-2 text-sm text-gray-500">
-                  <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                   Envasado al vacío
@@ -159,9 +153,7 @@ export default async function LandingPage() {
                         <span className="text-7xl sm:text-8xl">🥩</span>
                       </div>
                     )}
-                    <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 text-xs font-bold text-red-700 shadow-sm">
-                      Envío gratis
-                    </div>
+
                     {index === 0 && (
                       <div className="absolute top-3 right-3 bg-red-700 text-white rounded-full px-3 py-1 text-xs font-bold shadow-lg">
                         Más vendido
@@ -249,7 +241,7 @@ export default async function LandingPage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl sm:text-4xl font-bold">¿Listo para probar el mejor jamón?</h2>
           <p className="mt-4 text-red-100 text-lg max-w-2xl mx-auto">
-            Haz tu pedido ahora y recíbelo en casa en 24/48h. Paga con tarjeta o contra reembolso.
+            Haz tu pedido ahora. Paga con tarjeta o contra reembolso.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <a href="#productos"

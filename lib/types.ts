@@ -42,16 +42,6 @@ export type PaymentMethod = 'Efectivo' | 'Transferencia' | 'Tarjeta' | 'PayPal' 
 
 // --- Order types for the online store ---
 
-export interface ShippingAddress {
-  fullName: string;
-  phone: string;
-  email?: string;
-  street: string;
-  city: string;
-  province: string;
-  postalCode: string;
-}
-
 export interface OrderItem {
   productId: string;
   productName: string;
@@ -61,18 +51,16 @@ export interface OrderItem {
 }
 
 export type OrderPaymentMethod = 'tarjeta' | 'contrareembolso';
-export type OrderStatus = 'pendiente' | 'pagado' | 'enviado' | 'entregado' | 'cancelado';
+export type OrderStatus = 'pendiente' | 'pagado' | 'cancelado';
 
 export interface Order {
   id: string;
   items: OrderItem[];
   totalAmount: number;
-  shippingAddress: ShippingAddress;
   paymentMethod: OrderPaymentMethod;
   status: OrderStatus;
   notes: string;
   squarePaymentId?: string;
-  shipmentTracking?: ShipmentTracking | null;
   createdAt: string;
 }
 
@@ -87,7 +75,6 @@ export type ExpenseCategory =
   | 'Otro Marketing'
   // Operativos
   | 'Proveedores'
-  | 'Envíos'
   | 'Material'
   | 'Transporte'
   | 'Comisiones'
@@ -112,28 +99,6 @@ export interface Expense {
   createdAt: string;
 }
 
-export interface OriginAddress {
-  fullName: string;
-  phone: string;
-  street: string;
-  number?: string;
-  city: string;
-  province: string;
-  postalCode: string;
-  country: string;
-}
-
-export interface ShipmentTracking {
-  trackingNumber: string;
-  carrier: string;
-  carrierService: string;
-  labelUrl: string;
-  shipmentId: number;
-  totalPrice: number;
-  currency: string;
-  shippedAt: string;
-}
-
 export interface BusinessSettings {
   businessName: string;
   currency: string;
@@ -141,7 +106,6 @@ export interface BusinessSettings {
   defaultMargin: number;
   taxRate: number;
   lowStockThreshold: number;
-  originAddress?: OriginAddress;
 }
 
 export interface AppData {

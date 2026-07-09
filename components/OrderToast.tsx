@@ -66,21 +66,7 @@ export default function OrderToast() {
 
             {/* Order info */}
             <div className="mt-3 bg-gray-50 rounded-lg p-3 space-y-1.5 text-sm">
-              <div className="flex items-center gap-2">
-                <span className="text-gray-400">👤</span>
-                <span className="font-medium text-gray-800">{order.shippingAddress?.fullName || 'Cliente'}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-gray-400">📞</span>
-                <span className="text-gray-600">{order.shippingAddress?.phone || '—'}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-gray-400">📍</span>
-                <span className="text-gray-600 text-xs leading-tight">
-                  {order.shippingAddress?.street}, {order.shippingAddress?.city}, {order.shippingAddress?.province}
-                </span>
-              </div>
-              <div className="pt-1 flex items-center justify-between border-t border-gray-200">
+              <div className="pt-1 flex items-center justify-between">
                 <span className="text-xs text-gray-500">
                   {order.paymentMethod === 'contrareembolso' ? '💵 Contra reembolso' : '💳 Tarjeta'}
                 </span>

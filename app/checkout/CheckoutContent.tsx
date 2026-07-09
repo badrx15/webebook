@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { useStore } from '@/lib/store';
 import { formatCurrency } from '@/lib/utils';
 import { trackInitiateCheckout, trackPurchase } from '@/lib/metaPixel';
-import type { ShippingAddress } from '@/lib/types';
 
 export default function CheckoutContent() {
   const searchParams = useSearchParams();
@@ -43,7 +42,8 @@ export default function CheckoutContent() {
     });
   }, [cartItems, totalAmount]);
 
-  const [form, setForm] = useState<ShippingAddress>({ fullName: '', phone: '', email: '', street: '', city: '', province: '', postalCode: '' });
+  const [fullName, setFullName] = useState('');
+  const [phone, setPhone] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<'tarjeta' | 'contrareembolso'>('contrareembolso');
   const [notes, setNotes] = useState('');
   const [loading, setLoading] = useState(false);
@@ -92,12 +92,8 @@ export default function CheckoutContent() {
   }, [paymentMethod]);
 
   const validateForm = () => {
-    if (!form.fullName.trim()) { setError('Introduce tu nombre completo'); return false; }
-    if (!form.phone.trim() || form.phone.trim().length < 9) { setError('Introduce un teléfono válido'); return false; }
-    if (!form.street.trim()) { setError('Introduce tu dirección'); return false; }
-    if (!form.city.trim()) { setError('Introduce tu ciudad'); return false; }
-    if (!form.province.trim()) { setError('Introduce tu provincia'); return false; }
-    if (!form.postalCode.trim() || form.postalCode.trim().length < 5) { setError('Introduce un código postal válido'); return false; }
+    if (!fullName.trim()) { setError('Introduce tu nombre completo'); return false; }
+    if (!phone.trim() || phone.trim().length < 9) { setError('Introduce un teléfono válido'); return false; }
     return true;
   };
 
@@ -134,7 +130,6 @@ export default function CheckoutContent() {
       const newOrder = addOrder({
         items: cartItems.map(item => ({ productId: item.productId, productName: item.productName, quantity: item.quantity, unitPrice: item.unitPrice, totalPrice: item.totalPrice })),
         totalAmount,
-        shippingAddress: form,
         paymentMethod: orderPaymentMethod,
         notes,
         squarePaymentId,
@@ -152,10 +147,10 @@ export default function CheckoutContent() {
         date: new Date().toISOString(),
         items: saleItems,
         totalAmount, totalCost, grossProfit, profitMargin,
-        customerName: form.fullName,
-        customerContact: form.phone,
+        customerName: fullName,
+        customerContact: phone,
         paymentMethod: paymentMethod === 'tarjeta' ? 'Tarjeta' : 'Contrareembolso',
-        notes: `Pedido web #${newOrder.id.slice(0, 8)}. Envío: ${form.street}, ${form.city}, ${form.province}${notes ? '. ' + notes : ''}`,
+        notes: `Pedido web #${newOrder.id.slice(0, 8)}${notes ? '. ' + notes : ''}`,
       });
 
       // Track Purchase event for Meta Pixel
@@ -185,14 +180,11 @@ export default function CheckoutContent() {
           <h1 className="text-2xl font-bold text-gray-900 mb-2">
             {paymentMethod === 'contrareembolso' ? '¡Pedido Confirmado!' : '¡Pago Recibido!'}
           </h1>
-          <p className="text-gray-600 mb-2">Gracias por tu compra, <span className="font-semibold">{form.fullName}</span>.</p>
+          <p className="text-gray-600 mb-2">Gracias por tu compra, <span className="font-semibold">{fullName}</span>.</p>
           <p className="text-sm text-gray-500 mb-6">
             {paymentMethod === 'contrareembolso' ? 'Pagas cuando recibas el pedido.' : 'Recibirás un email de confirmación.'}
           </p>
-          <p className="text-sm text-gray-600 mb-8">📦 Envío a: {form.street}, {form.city}, {form.province} ({form.postalCode})</p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link href="/" className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-red-700 text-white font-semibold hover:bg-red-800 transition-all">Volver a la Tienda</Link>
-          </div>
+          <Link href="/" className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-red-700 text-white font-semibold hover:bg-red-800 transition-all">Volver a la Tienda</Link>
         </div>
       </main>
     );
@@ -234,49 +226,16 @@ export default function CheckoutContent() {
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Nombre completo *</label>
-                  <input type="text" value={form.fullName} onChange={e => setForm(f => ({ ...f, fullName: e.target.value }))}
+                  <input type="text" value={fullName} onChange={e => setFullName(e.target.value)}
                     className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-red-300 focus:ring-2 focus:ring-red-100 outline-none transition-all text-base"
                     placeholder="Ej: María García López" required />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Teléfono *</label>
-                  <input type="tel" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
+                  <input type="tel" value={phone} onChange={e => setPhone(e.target.value)}
                     className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-red-300 focus:ring-2 focus:ring-red-100 outline-none text-base"
                     placeholder="Ej: 612 345 678" required />
                   <p className="text-xs text-gray-400 mt-1">Te llamaremos si hay alguna duda</p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                  <input type="email" value={form.email || ''} onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-red-300 focus:ring-2 focus:ring-red-100 outline-none text-base"
-                    placeholder="Ej: cliente@email.com" />
-                  <p className="text-xs text-gray-400 mt-1">Necesario para recibir notificaciones de envío</p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Calle y número *</label>
-                  <input type="text" value={form.street} onChange={e => setForm(f => ({ ...f, street: e.target.value }))}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-red-300 focus:ring-2 focus:ring-red-100 outline-none text-base"
-                    placeholder="Ej: Calle Mayor, 15, 2ºB" required />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Ciudad *</label>
-                    <input type="text" value={form.city} onChange={e => setForm(f => ({ ...f, city: e.target.value }))}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-red-300 focus:ring-2 focus:ring-red-100 outline-none text-base"
-                      placeholder="Ej: Cáceres" required />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Provincia *</label>
-                    <input type="text" value={form.province} onChange={e => setForm(f => ({ ...f, province: e.target.value }))}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-red-300 focus:ring-2 focus:ring-red-100 outline-none text-base"
-                      placeholder="Ej: Cáceres" required />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Código Postal *</label>
-                  <input type="text" value={form.postalCode} onChange={e => setForm(f => ({ ...f, postalCode: e.target.value }))}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-red-300 focus:ring-2 focus:ring-red-100 outline-none text-base"
-                    placeholder="Ej: 10001" required />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Notas (opcional)</label>
@@ -366,7 +325,6 @@ export default function CheckoutContent() {
               )}
               <div className="border-t border-gray-200 pt-4 space-y-2">
                 <div className="flex justify-between text-sm text-gray-600"><span>Subtotal</span><span>{formatCurrency(totalAmount, currencySymbol)}</span></div>
-                <div className="flex justify-between text-sm text-gray-600"><span>Envío</span><span className="text-green-600 font-medium">Gratis</span></div>
                 <div className="flex justify-between text-lg font-bold text-gray-900 pt-2 border-t border-gray-100">
                   <span>Total</span>
                   <span className="text-red-700">{formatCurrency(totalAmount, currencySymbol)}</span>
@@ -374,7 +332,6 @@ export default function CheckoutContent() {
               </div>
               <div className="mt-6 space-y-2 text-sm text-gray-500">
                 <p>🔒 Pago seguro con cifrado SSL</p>
-                <p>📦 Envío gratuito en 24/48h</p>
               </div>
             </div>
           </div>

@@ -16,8 +16,6 @@ export default function OrdersPage() {
     switch (status) {
       case 'pendiente': return 'chip-yellow';
       case 'pagado': return 'chip-blue';
-      case 'enviado': return 'chip-green';
-      case 'entregado': return 'chip-green';
       case 'cancelado': return 'chip-red';
     }
   };
@@ -26,8 +24,6 @@ export default function OrdersPage() {
     switch (status) {
       case 'pendiente': return 'Pendiente';
       case 'pagado': return 'Pagado';
-      case 'enviado': return 'Enviado';
-      case 'entregado': return 'Entregado';
       case 'cancelado': return 'Cancelado';
     }
   };
@@ -35,9 +31,7 @@ export default function OrdersPage() {
   const nextStatus = (status: OrderStatus): OrderStatus | null => {
     switch (status) {
       case 'pendiente': return 'pagado';
-      case 'pagado': return 'enviado';
-      case 'enviado': return 'entregado';
-      case 'entregado': return null;
+      case 'pagado': return null;
       case 'cancelado': return null;
     }
   };
@@ -50,7 +44,7 @@ export default function OrdersPage() {
           <p className="text-[var(--text-secondary)] mt-1">{orders.length} pedidos recibidos</p>
         </div>
         <div className="flex gap-2">
-          {(['', 'pendiente', 'pagado', 'enviado', 'entregado', 'cancelado'] as const).map(s => (
+          {(['', 'pendiente', 'pagado', 'cancelado'] as const).map(s => (
             <button key={s} onClick={() => setStatusFilter(s)}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                 statusFilter === s
@@ -81,13 +75,6 @@ export default function OrdersPage() {
                     <span className={getStatusColor(order.status)}>{getStatusLabel(order.status)}</span>
                     <span className="chip">{order.paymentMethod === 'tarjeta' ? '💳 Tarjeta' : '💵 Contrareembolso'}</span>
                     <span className="text-xs text-[var(--text-secondary)]">{formatDateTime(order.createdAt)}</span>
-                  </div>
-
-                  {/* Customer info */}
-                  <div className="bg-[var(--card-hover)] rounded-lg p-3 space-y-1 text-sm">
-                    <p className="font-medium">{order.shippingAddress.fullName}</p>
-                    <p className="text-[var(--text-secondary)]">📞 {order.shippingAddress.phone}</p>
-                    <p className="text-[var(--text-secondary)]">📍 {order.shippingAddress.street}, {order.shippingAddress.city}, {order.shippingAddress.province} — {order.shippingAddress.postalCode}</p>
                   </div>
 
                   {/* Products */}

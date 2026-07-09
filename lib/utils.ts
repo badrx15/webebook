@@ -181,7 +181,6 @@ export const EXPENSE_CATEGORIES = [
   'Otro Marketing',
   // Operativos
   'Proveedores',
-  'Envíos',
   'Material',
   'Transporte',
   'Comisiones',

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import type { AppData, Product, Sale, Expense, BusinessSettings, Order, OrderItem, ShippingAddress, OrderStatus, ShipmentTracking } from './types';
+import type { AppData, Product, Sale, Expense, BusinessSettings, Order, OrderItem, OrderStatus } from './types';
 import { useAdminInitialData, useAdminDataUpdater } from './admin-store-context';
 
 const DEFAULT_SETTINGS: BusinessSettings = {
@@ -11,16 +11,6 @@ const DEFAULT_SETTINGS: BusinessSettings = {
   defaultMargin: 30,
   taxRate: 21,
   lowStockThreshold: 5,
-  originAddress: {
-    fullName: '',
-    phone: '',
-    street: '',
-    number: '',
-    city: '',
-    province: '',
-    postalCode: '',
-    country: 'ES',
-  },
 };
 
 const DEFAULT_DATA: AppData = {
@@ -296,7 +286,7 @@ export function useStore() {
   }, [mutate]);
 
   // --- Orders (from online store) ---
-  const addOrder = useCallback((order: { items: OrderItem[]; totalAmount: number; shippingAddress: ShippingAddress; paymentMethod: 'tarjeta' | 'contrareembolso'; notes: string; squarePaymentId?: string }) => {
+  const addOrder = useCallback((order: { items: OrderItem[]; totalAmount: number; paymentMethod: 'tarjeta' | 'contrareembolso'; notes: string; squarePaymentId?: string }) => {
     const newOrder: Order = {
       ...order,
       id: generateId(),
@@ -311,15 +301,6 @@ export function useStore() {
     mutate(prev => ({
       ...prev,
       orders: prev.orders.map(o => o.id === id ? { ...o, status } : o),
-    }));
-  }, [mutate]);
-
-  const updateOrderTracking = useCallback((id: string, tracking: ShipmentTracking, orderStatus: OrderStatus = 'enviado') => {
-    mutate(prev => ({
-      ...prev,
-      orders: prev.orders.map(o =>
-        o.id === id ? { ...o, status: orderStatus, shipmentTracking: tracking } : o
-      ),
     }));
   }, [mutate]);
 
@@ -348,7 +329,6 @@ export function useStore() {
     deleteProduct,
     addOrder,
     updateOrderStatus,
-    updateOrderTracking,
     deleteOrder,
     addSale,
     deleteSale,
