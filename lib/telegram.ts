@@ -12,7 +12,7 @@ interface OrderNotification {
   createdAt: string;
 }
 
-function escapeMarkdown(text: string): string {
+export function escapeMarkdown(text: string): string {
   // Escape MarkdownV2 special characters
   return text.replace(/[_*[\]()~`>#+\-=|{}.!]/g, '\\$&');
 }
