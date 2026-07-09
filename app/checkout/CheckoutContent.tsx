@@ -162,6 +162,26 @@ export default function CheckoutContent() {
         num_items: cartItems.length,
       });
 
+      // Send Telegram notification (fire-and-forget — no bloquea el flujo)
+      fetch('/api/telegram-notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: newOrder.id,
+          customerName: fullName,
+          phone: phone,
+          items: cartItems.map(item => ({
+            productName: item.productName,
+            quantity: item.quantity,
+            totalPrice: item.totalPrice,
+          })),
+          totalAmount,
+          paymentMethod: orderPaymentMethod,
+          notes: notes,
+          createdAt: newOrder.createdAt,
+        }),
+      }).catch(() => {}); // Silent fail — no afecta al usuario
+
       setSuccess(true);
     } catch (err: any) {
       setError('Error inesperado: ' + err.message);
