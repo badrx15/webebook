@@ -1,5 +1,115 @@
 // Server-only Gemini AI helper for blog article generation
 
+export interface GeneratedArticle {
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  category: string;
+  tags: string[];
+}
+
+// Extract a JSON string value starting at the given position after the opening quote
+// Handles unescaped internal quotes by checking if the quote is followed by a structural character
+function extractStringValue(text: string, startIdx: number): { value: string; endIdx: number } {
+  let result = '';
+  let i = startIdx;
+
+  while (i < text.length) {
+    const ch = text[i];
+
+    // Handle escaped characters
+    if (ch === '\\' && i + 1 < text.length) {
+      result += ch + text[i + 1];
+      i += 2;
+      continue;
+    }
+
+    // Found a closing quote - check if it's really the end
+    if (ch === '"') {
+      const rest = text.slice(i + 1).trimStart();
+      // If followed by , or } or ], it's the closing quote
+      if (rest.startsWith(',') || rest.startsWith('}') || rest.startsWith(']')) {
+        return { value: result, endIdx: i };
+      }
+      // Otherwise it's an unescaped internal quote - escape it
+      result += '\\"';
+      i++;
+      continue;
+    }
+
+    result += ch;
+    i++;
+  }
+
+  // If we got here, the string is unterminated - return what we have
+  return { value: result, endIdx: i };
+}
+
+// Extract a JSON array of strings starting at the given position after the opening bracket
+function extractStringArray(text: string, startIdx: number): { value: string[]; endIdx: number } {
+  const result: string[] = [];
+  let i = startIdx;
+
+  while (i < text.length) {
+    const ch = text[i];
+
+    if (ch === '"') {
+      const { value, endIdx } = extractStringValue(text, i + 1);
+      result.push(value);
+      i = endIdx + 1;
+      // Skip whitespace and comma
+      while (i < text.length && (text[i] === ',' || text[i] === ' ' || text[i] === '\n' || text[i] === '\r' || text[i] === '\t')) {
+        i++;
+      }
+      continue;
+    }
+
+    if (ch === ']') {
+      return { value: result, endIdx: i };
+    }
+
+    i++;
+  }
+
+  return { value: result, endIdx: i };
+}
+
+// Manual field-by-field extraction when JSON.parse fails
+function extractFieldsManually(text: string): any {
+  const fields: Record<string, string | string[]> = {};
+  const fieldOrder = ['title', 'slug', 'excerpt', 'content', 'category', 'tags'];
+
+  let pos = 0;
+
+  for (const field of fieldOrder) {
+    // Find the field key in the remaining text
+    const keyPattern = `"${field}"\\s*:\\s*`;
+    const keyMatch = text.slice(pos).match(new RegExp(keyPattern));
+    if (!keyMatch) continue;
+
+    pos += (keyMatch.index || 0) + keyMatch[0].length;
+
+    if (field === 'tags') {
+      // Expecting an array
+      if (text[pos] === '[') {
+        const { value, endIdx } = extractStringArray(text, pos + 1);
+        fields[field] = value;
+        pos = endIdx + 1;
+      }
+    } else {
+      // Expecting a string value
+      if (text[pos] === '"') {
+        const { value, endIdx } = extractStringValue(text, pos + 1);
+        fields[field] = value;
+        pos = endIdx + 1;
+      }
+    }
+  }
+
+  return fields;
+}
+
 // Helper to try to fix common JSON issues from LLM output
 function parseGeminiJSON(raw: string): any {
   // First try: standard parse
@@ -27,9 +137,7 @@ function parseGeminiJSON(raw: string): any {
     // Continue to deep cleanup
   }
 
-  // Deep cleanup: fix unescaped characters inside JSON string values
-  // Strategy: rebuild the JSON by finding key-value pairs
-  // First, try to fix unescaped newlines within strings
+  // Deep cleanup: fix unescaped newlines within strings
   let cleaned = '';
   let inString = false;
   let escape = false;
@@ -62,26 +170,33 @@ function parseGeminiJSON(raw: string): any {
   try {
     return JSON.parse(cleaned);
   } catch {
-    // Continue to last resort
+    // Continue
   }
 
-  // Last resort: remove trailing commas and any remaining backticks
-  let final = cleaned
+  // Clean trailing commas
+  cleaned = cleaned
     .replace(/,\s*}/g, '}')
     .replace(/,\s*]/g, ']')
     .replace(/`/g, '')
     .trim();
 
-  return JSON.parse(final);
-}
+  // Fourth try: after cleaning
+  try {
+    return JSON.parse(cleaned);
+  } catch {
+    // Continue to manual extraction
+  }
 
-export interface GeneratedArticle {
-  title: string;
-  slug: string;
-  excerpt: string;
-  content: string;
-  category: string;
-  tags: string[];
+  // Final fallback: extract fields manually (handles unescaped quotes in string values)
+  const extracted = extractFieldsManually(cleaned);
+  if (extracted.title && extracted.content) {
+    return extracted;
+  }
+
+  // If we got here, nothing worked
+  // Try to show a snippet of the JSON for debugging
+  const snippet = cleaned.slice(0, 300);
+  throw new Error(`Gemini devolvió JSON inválido: no se pudo extraer el contenido. Inicio: ${snippet}`);
 }
 
 export async function generateArticle(keyword: string, existingSlugs: string[]): Promise<GeneratedArticle> {
@@ -106,19 +221,12 @@ REQUISITOS:
 - Si mencionas productos, di "nuestro jamón" o "Ibéricos Gourmet"
 - Al final, incluye una llamada a la acción suave para comprar
 
-IMPORTANTE: El contenido del artículo usa ## para títulos, ### para subtítulos y - para listas. El JSON debe ser VÁLIDO: escapa las comillas dobles como \" y los saltos de línea como \n dentro de los strings. No uses saltos de línea literales en los valores del JSON.
+IMPORTANTE: El JSON debe ser ESTRICTAMENTE VÁLIDO. Escapa todas las comillas dobles dentro de los strings como \\". Escapa los saltos de línea como \\n. No pongas comillas dobles sin escapar dentro de ningún valor. Si necesitas citar algo en el contenido, usa comillas simples 'así' en lugar de dobles.
 
-RESPONDE ÚNICAMENTE CON JSON CRUDO. SIN markdown, SIN bloques de código, SIN comillas invertidas, SIN etiquetas. Solo el JSON plano en una sola línea o con saltos de línea JSON válidos.
+RESPONDE ÚNICAMENTE CON JSON CRUDO. SIN markdown, SIN bloques de código, SIN comillas invertidas, SIN etiquetas. Solo el JSON plano.
 
-Ejemplo de JSON exacto a devolver:
-{
-  "title": "Título SEO máximo 60 caracteres",
-  "slug": "slug-unico-en-minusculas-con-guiones",
-  "excerpt": "Resumen breve máximo 160 caracteres",
-  "content": "Contenido del artículo con ## y ### y -",
-  "category": "Categoría de las listadas",
-  "tags": ["tag1", "tag2", "tag3", "tag4"]
-}`;
+Ejemplo exacto:
+{"title": "Título SEO", "slug": "slug-unico", "excerpt": "Resumen breve", "content": "## Título\\n\\nContenido del artículo con comillas simples 'así'", "category": "Recetas", "tags": ["tag1", "tag2"]}`;
 
   const url = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
   const fetchOptions = {
@@ -129,19 +237,19 @@ Ejemplo de JSON exacto a devolver:
       generationConfig: {
         temperature: 0.5,
         maxOutputTokens: 2048,
+        response_mime_type: 'application/json',
       },
     }),
   };
 
   const MAX_RETRIES = 3;
-  const RETRY_DELAYS = [5000, 10000, 15000]; // 5s, 10s, 15s
+  const RETRY_DELAYS = [5000, 10000, 15000];
   let lastError: Error | null = null;
 
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
     try {
       const res = await fetch(url, fetchOptions);
 
-      // If model is busy (503), wait and retry
       if (res.status === 503 && attempt < MAX_RETRIES) {
         const delay = RETRY_DELAYS[attempt];
         await new Promise(resolve => setTimeout(resolve, delay));
@@ -160,19 +268,15 @@ Ejemplo de JSON exacto a devolver:
         throw new Error('Gemini no devolvió contenido');
       }
 
-      // Parse the JSON from the response (with robust cleanup for LLM output)
       const parsed = parseGeminiJSON(text);
       const article = parsed as GeneratedArticle;
 
-      // Validate
       if (!article.title || !article.slug || !article.content) {
         throw new Error('Gemini devolvió un JSON incompleto');
       }
 
-      // Clean slug
       article.slug = article.slug.toLowerCase().replace(/[^a-z0-9-]/g, '').replace(/-+/g, '-').replace(/^-|-$/g, '');
 
-      // Ensure unique slug
       let finalSlug = article.slug;
       let counter = 1;
       while (existingSlugs.includes(finalSlug)) {
@@ -184,13 +288,11 @@ Ejemplo de JSON exacto a devolver:
       return article;
     } catch (error: any) {
       lastError = error;
-      // If we've exhausted retries, stop retrying
       if (attempt >= MAX_RETRIES) {
         throw new Error(`Error generando artículo: ${lastError!.message}`);
       }
     }
   }
 
-  // Should never reach here, but TypeScript safety
   throw lastError || new Error('Error generando artículo: Error desconocido');
 }
