@@ -24,40 +24,9 @@ export default function BlogAdminPage() {
     image: '',
   });
 
-  // --- AI Generation state ---
-  const [aiKeyword, setAiKeyword] = useState('');
-  const [generating, setGenerating] = useState(false);
-  const [aiError, setAiError] = useState('');
-  const [aiSuccess, setAiSuccess] = useState('');
-
   // --- Stats ---
   const totalViews = useMemo(() => posts.reduce((s, p) => s + (p.views || 0), 0), [posts]);
   const publishedCount = useMemo(() => posts.filter(p => p.published).length, [posts]);
-
-  const generateWithAI = async () => {
-    if (!aiKeyword.trim() || aiKeyword.trim().length < 3) return;
-    setGenerating(true);
-    setAiError('');
-    setAiSuccess('');
-    try {
-      const res = await fetch('/api/generate-article', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ keyword: aiKeyword.trim() }),
-      });
-      const result = await res.json();
-      if (!result.success) {
-        setAiError(result.error || 'Error al generar');
-      } else {
-        setAiSuccess(`✅ Artículo generado: "${result.article.title}"`);
-        setAiKeyword('');
-      }
-    } catch (err: any) {
-      setAiError('Error de conexión: ' + err.message);
-    } finally {
-      setGenerating(false);
-    }
-  };
 
   const openNew = () => {
     setEditingPost(null);
@@ -126,48 +95,12 @@ export default function BlogAdminPage() {
         </button>
       </div>
 
-      {/* AI Article Generator */}
-      <div className="card p-5">
-        <h2 className="text-lg font-bold text-gray-900 mb-3">🤖 Generar artículo con IA</h2>
-        <p className="text-sm text-[var(--text-secondary)] mb-4">
-          Escribe una palabra clave o tema y Gemini generará un artículo optimizado para SEO automáticamente.
-        </p>
-        <div className="flex gap-3">
-          <input
-            type="text"
-            value={aiKeyword}
-            onChange={e => setAiKeyword(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && generateWithAI()}
-            className="input-field flex-1"
-            placeholder="Ej: jamón ibérico para bodas, cómo cortar jamón, beneficios del jamón..."
-            disabled={generating}
-          />
-          <button
-            onClick={generateWithAI}
-            disabled={generating || aiKeyword.trim().length < 3}
-            className="btn-primary whitespace-nowrap"
-          >
-            {generating ? (
-              <span className="flex items-center gap-2">
-                <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                </svg>
-                Generando...
-              </span>
-            ) : 'Generar'}
-          </button>
-        </div>
-        {aiError && <p className="text-sm text-red-600 mt-2">{aiError}</p>}
-        {aiSuccess && <p className="text-sm text-green-600 mt-2">{aiSuccess}</p>}
-      </div>
-
       {/* Blog posts list */}
       <div className="space-y-3">
         {posts.length === 0 ? (
           <div className="card p-12 text-center">
             <div className="text-4xl mb-3">📝</div>
-            <p className="text-[var(--text-secondary)]">No hay artículos todavía. ¡Usa la IA para generar el primero!</p>
+            <p className="text-[var(--text-secondary)]">No hay artículos todavía. ¡Crea el primero!</p>
           </div>
         ) : (
           [...posts]
