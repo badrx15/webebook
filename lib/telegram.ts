@@ -17,13 +17,15 @@ export function escapeMarkdown(text: string): string {
   return text.replace(/[_*[\]()~`>#+\-=|{}.!]/g, '\\$&');
 }
 
-export async function sendTelegramNotification(order: OrderNotification): Promise<boolean> {
+export async function sendTelegramNotification(order: OrderNotification): Promise<void> {
   const botToken = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = process.env.ADMIN_CHAT_ID;
 
   if (!botToken || !chatId) {
-    console.warn('TELEGRAM_BOT_TOKEN or ADMIN_CHAT_ID not configured. Skipping Telegram notification.');
-    return false;
+    const missing = [];
+    if (!botToken) missing.push('TELEGRAM_BOT_TOKEN');
+    if (!chatId) missing.push('ADMIN_CHAT_ID');
+    throw new Error(`Variables de entorno no configuradas en Vercel: ${missing.join(', ')}`);
   }
 
   const itemsText = order.items
@@ -65,13 +67,10 @@ export async function sendTelegramNotification(order: OrderNotification): Promis
 
     if (!res.ok) {
       const errorBody = await res.text();
-      console.error('Telegram API error:', res.status, errorBody);
-      return false;
+      throw new Error(`Telegram API respondió con error ${res.status}: ${errorBody.slice(0, 200)}`);
     }
-
-    return true;
   } catch (error) {
-    console.error('Error sending Telegram notification:', error);
-    return false;
+    if (error instanceof Error) throw error;
+    throw new Error(`Error de red al conectar con Telegram: ${error}`);
   }
 }

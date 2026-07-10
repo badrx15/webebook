@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const sent = await sendTelegramNotification({
+    await sendTelegramNotification({
       id,
       customerName,
       phone,
@@ -25,13 +25,6 @@ export async function POST(req: NextRequest) {
       notes: notes || '',
       createdAt,
     });
-
-    if (!sent) {
-      return NextResponse.json(
-        { success: false, error: 'Error al enviar la notificación a Telegram' },
-        { status: 500 }
-      );
-    }
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
