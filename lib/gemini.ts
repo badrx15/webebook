@@ -43,82 +43,102 @@ Ejemplo de JSON exacto a devolver:
   "tags": ["tag1", "tag2", "tag3", "tag4"]
 }`;
 
-  try {
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: {
-            temperature: 0.5,
-            maxOutputTokens: 2048,
-          },
-        }),
-      }
-    );
+  const url = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+  const fetchOptions = {
+    method: 'POST' as const,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: {
+        temperature: 0.5,
+        maxOutputTokens: 2048,
+      },
+    }),
+  };
 
-    if (!res.ok) {
-      const errBody = await res.text();
-      throw new Error(`Gemini API error (${res.status}): ${errBody.slice(0, 200)}`);
-    }
+  const MAX_RETRIES = 3;
+  const RETRY_DELAYS = [5000, 10000, 15000]; // 5s, 10s, 15s
+  let lastError: Error | null = null;
 
-    const data = await res.json();
-    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-
-    if (!text) {
-      throw new Error('Gemini no devolvió contenido');
-    }
-
-    // Parse the JSON from the response
-    let jsonStr = text.trim();
-
-    // Strategy 1: Try extracting from markdown code block
-    let jsonMatch = jsonStr.match(/```(?:json)?\s*\n?([\s\S]*?)\n?\s*```/);
-    if (jsonMatch) {
-      jsonStr = jsonMatch[1].trim();
-    } else {
-      // Strategy 2: Try to find first { and last } in the text
-      const firstBrace = jsonStr.indexOf('{');
-      const lastBrace = jsonStr.lastIndexOf('}');
-      if (firstBrace !== -1 && lastBrace > firstBrace) {
-        jsonStr = jsonStr.slice(firstBrace, lastBrace + 1);
-      }
-    }
-
-    // Try to parse
-    let article: GeneratedArticle;
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
     try {
-      article = JSON.parse(jsonStr) as GeneratedArticle;
-    } catch {
-      // Strategy 3: Clean up common issues and try again
-      jsonStr = jsonStr
-        .replace(/```/g, '')
-        .replace(/^json\s*/i, '')
-        .trim();
-      article = JSON.parse(jsonStr) as GeneratedArticle;
+      const res = await fetch(url, fetchOptions);
+
+      // If model is busy (503), wait and retry
+      if (res.status === 503 && attempt < MAX_RETRIES) {
+        const delay = RETRY_DELAYS[attempt];
+        await new Promise(resolve => setTimeout(resolve, delay));
+        continue;
+      }
+
+      if (!res.ok) {
+        const errBody = await res.text();
+        throw new Error(`Gemini API error (${res.status}): ${errBody.slice(0, 200)}`);
+      }
+
+      const data = await res.json();
+      const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+      if (!text) {
+        throw new Error('Gemini no devolvió contenido');
+      }
+
+      // Parse the JSON from the response
+      let jsonStr = text.trim();
+
+      // Strategy 1: Try extracting from markdown code block
+      let jsonMatch = jsonStr.match(/```(?:json)?\s*\n?([\s\S]*?)\n?\s*```/);
+      if (jsonMatch) {
+        jsonStr = jsonMatch[1].trim();
+      } else {
+        // Strategy 2: Try to find first { and last } in the text
+        const firstBrace = jsonStr.indexOf('{');
+        const lastBrace = jsonStr.lastIndexOf('}');
+        if (firstBrace !== -1 && lastBrace > firstBrace) {
+          jsonStr = jsonStr.slice(firstBrace, lastBrace + 1);
+        }
+      }
+
+      // Try to parse
+      let article: GeneratedArticle;
+      try {
+        article = JSON.parse(jsonStr) as GeneratedArticle;
+      } catch {
+        // Strategy 3: Clean up common issues and try again
+        jsonStr = jsonStr
+          .replace(/```/g, '')
+          .replace(/^json\s*/i, '')
+          .trim();
+        article = JSON.parse(jsonStr) as GeneratedArticle;
+      }
+
+      // Validate
+      if (!article.title || !article.slug || !article.content) {
+        throw new Error('Gemini devolvió un JSON incompleto');
+      }
+
+      // Clean slug
+      article.slug = article.slug.toLowerCase().replace(/[^a-z0-9-]/g, '').replace(/-+/g, '-').replace(/^-|-$/g, '');
+
+      // Ensure unique slug
+      let finalSlug = article.slug;
+      let counter = 1;
+      while (existingSlugs.includes(finalSlug)) {
+        finalSlug = `${article.slug}-${counter}`;
+        counter++;
+      }
+      article.slug = finalSlug;
+
+      return article;
+    } catch (error: any) {
+      lastError = error;
+      // If we've exhausted retries, stop retrying
+      if (attempt >= MAX_RETRIES) {
+        throw new Error(`Error generando artículo: ${lastError!.message}`);
+      }
     }
-
-    // Validate
-    if (!article.title || !article.slug || !article.content) {
-      throw new Error('Gemini devolvió un JSON incompleto');
-    }
-
-    // Clean slug
-    article.slug = article.slug.toLowerCase().replace(/[^a-z0-9-]/g, '').replace(/-+/g, '-').replace(/^-|-$/g, '');
-
-    // Ensure unique slug
-    let finalSlug = article.slug;
-    let counter = 1;
-    while (existingSlugs.includes(finalSlug)) {
-      finalSlug = `${article.slug}-${counter}`;
-      counter++;
-    }
-    article.slug = finalSlug;
-
-    return article;
-  } catch (error: any) {
-    throw new Error(`Error generando artículo: ${error.message}`);
   }
+
+  // Should never reach here, but TypeScript safety
+  throw lastError || new Error('Error generando artículo: Error desconocido');
 }
