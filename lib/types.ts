@@ -117,6 +117,7 @@ export interface BlogPost {
   category: string;
   tags: string[];
   published: boolean;
+  views: number;
   createdAt: string;
   updatedAt: string;
 }

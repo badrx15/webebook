@@ -2,6 +2,7 @@ import { getData } from '@/lib/data-store';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
+import BlogViewTracker from '@/components/BlogViewTracker';
 
 interface Props {
   params: { slug: string };
@@ -66,6 +67,7 @@ export default async function BlogPostPage({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-white">
+      <BlogViewTracker slug={post.slug} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}

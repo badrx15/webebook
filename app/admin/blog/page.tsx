@@ -24,6 +24,41 @@ export default function BlogAdminPage() {
     image: '',
   });
 
+  // --- AI Generation state ---
+  const [aiKeyword, setAiKeyword] = useState('');
+  const [generating, setGenerating] = useState(false);
+  const [aiError, setAiError] = useState('');
+  const [aiSuccess, setAiSuccess] = useState('');
+
+  // --- Stats ---
+  const totalViews = useMemo(() => posts.reduce((s, p) => s + (p.views || 0), 0), [posts]);
+  const publishedCount = useMemo(() => posts.filter(p => p.published).length, [posts]);
+
+  const generateWithAI = async () => {
+    if (!aiKeyword.trim() || aiKeyword.trim().length < 3) return;
+    setGenerating(true);
+    setAiError('');
+    setAiSuccess('');
+    try {
+      const res = await fetch('/api/generate-article', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ keyword: aiKeyword.trim() }),
+      });
+      const result = await res.json();
+      if (!result.success) {
+        setAiError(result.error || 'Error al generar');
+      } else {
+        setAiSuccess(`✅ Artículo generado: "${result.article.title}"`);
+        setAiKeyword('');
+      }
+    } catch (err: any) {
+      setAiError('Error de conexión: ' + err.message);
+    } finally {
+      setGenerating(false);
+    }
+  };
+
   const openNew = () => {
     setEditingPost(null);
     setForm({ title: '', slug: '', excerpt: '', content: '', category: 'Recetas', tags: '', published: false, image: '' });
@@ -58,6 +93,7 @@ export default function BlogAdminPage() {
       tags: form.tags.split(',').map(t => t.trim()).filter(Boolean),
       published: form.published,
       image: form.image || undefined,
+      views: 0,
     };
 
     if (editingPost) {
@@ -74,10 +110,13 @@ export default function BlogAdminPage() {
 
   return (
     <div className="space-y-6">
+      {/* Header with stats */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Blog</h1>
-          <p className="text-[var(--text-secondary)] mt-1">{posts.length} artículos</p>
+          <p className="text-[var(--text-secondary)] mt-1">
+            {posts.length} artículos · {publishedCount} publicados · {totalViews} visitas totales
+          </p>
         </div>
         <button onClick={openNew} className="btn-primary">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -87,12 +126,48 @@ export default function BlogAdminPage() {
         </button>
       </div>
 
+      {/* AI Article Generator */}
+      <div className="card p-5">
+        <h2 className="text-lg font-bold text-gray-900 mb-3">🤖 Generar artículo con IA</h2>
+        <p className="text-sm text-[var(--text-secondary)] mb-4">
+          Escribe una palabra clave o tema y Gemini generará un artículo optimizado para SEO automáticamente.
+        </p>
+        <div className="flex gap-3">
+          <input
+            type="text"
+            value={aiKeyword}
+            onChange={e => setAiKeyword(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && generateWithAI()}
+            className="input-field flex-1"
+            placeholder="Ej: jamón ibérico para bodas, cómo cortar jamón, beneficios del jamón..."
+            disabled={generating}
+          />
+          <button
+            onClick={generateWithAI}
+            disabled={generating || aiKeyword.trim().length < 3}
+            className="btn-primary whitespace-nowrap"
+          >
+            {generating ? (
+              <span className="flex items-center gap-2">
+                <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+                Generando...
+              </span>
+            ) : 'Generar'}
+          </button>
+        </div>
+        {aiError && <p className="text-sm text-red-600 mt-2">{aiError}</p>}
+        {aiSuccess && <p className="text-sm text-green-600 mt-2">{aiSuccess}</p>}
+      </div>
+
       {/* Blog posts list */}
       <div className="space-y-3">
         {posts.length === 0 ? (
           <div className="card p-12 text-center">
             <div className="text-4xl mb-3">📝</div>
-            <p className="text-[var(--text-secondary)]">No hay artículos todavía. ¡Crea el primero!</p>
+            <p className="text-[var(--text-secondary)]">No hay artículos todavía. ¡Usa la IA para generar el primero!</p>
           </div>
         ) : (
           [...posts]
@@ -119,6 +194,10 @@ export default function BlogAdminPage() {
                     >
                       {post.published ? 'Publicado' : 'Borrador'}
                     </button>
+                    {/* Views badge */}
+                    <span className="text-xs text-gray-400 flex items-center gap-1 ml-1" title="Visitas">
+                      👁️ {post.views || 0}
+                    </span>
                   </div>
                   <h3 className="font-semibold text-gray-900 truncate">{post.title}</h3>
                   <p className="text-sm text-gray-500 truncate mt-0.5">{post.excerpt}</p>
@@ -142,6 +221,31 @@ export default function BlogAdminPage() {
             ))
         )}
       </div>
+
+      {/* Stats summary */}
+      {posts.length > 0 && (
+        <div className="card p-5">
+          <h3 className="font-semibold text-gray-900 mb-3">📊 Resumen del Blog</h3>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+            <div className="p-3 bg-blue-50 rounded-xl">
+              <p className="text-2xl font-bold text-blue-700">{posts.length}</p>
+              <p className="text-xs text-blue-600">Total artículos</p>
+            </div>
+            <div className="p-3 bg-green-50 rounded-xl">
+              <p className="text-2xl font-bold text-green-700">{publishedCount}</p>
+              <p className="text-xs text-green-600">Publicados</p>
+            </div>
+            <div className="p-3 bg-purple-50 rounded-xl">
+              <p className="text-2xl font-bold text-purple-700">{totalViews}</p>
+              <p className="text-xs text-purple-600">Visitas totales</p>
+            </div>
+            <div className="p-3 bg-amber-50 rounded-xl">
+              <p className="text-2xl font-bold text-amber-700">{posts.length - publishedCount}</p>
+              <p className="text-xs text-amber-600">Borradores</p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Blog Post Form Modal */}
       <Modal
