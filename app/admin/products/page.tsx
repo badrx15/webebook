@@ -71,7 +71,7 @@ export default function ProductsPage() {
     setShowModal(true);
   };
 
-  // Image upload handler (converts to base64)
+  // Image upload handler — compresses to max 800px width before converting to base64
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -79,14 +79,31 @@ export default function ProductsPage() {
       alert('Solo se permiten imágenes (JPG, PNG, WEBP)');
       return;
     }
-    if (file.size > 2 * 1024 * 1024) {
-      alert('La imagen no debe superar 2MB');
+    if (file.size > 5 * 1024 * 1024) {
+      alert('La imagen no debe superar 5MB');
       return;
     }
+
     const reader = new FileReader();
     reader.onload = (ev) => {
-      const dataUrl = ev.target?.result as string;
-      setForm(f => ({ ...f, image: dataUrl }));
+      const img = new Image();
+      img.onload = () => {
+        // Compress: max 800px width, maintain aspect ratio, JPEG quality 0.7
+        const MAX_WIDTH = 800;
+        const scale = Math.min(1, MAX_WIDTH / img.width);
+        const width = Math.round(img.width * scale);
+        const height = Math.round(img.height * scale);
+
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d')!;
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const compressed = canvas.toDataURL('image/jpeg', 0.7);
+        setForm(f => ({ ...f, image: compressed }));
+      };
+      img.src = ev.target?.result as string;
     };
     reader.readAsDataURL(file);
   };
