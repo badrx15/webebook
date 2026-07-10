@@ -1,5 +1,80 @@
 // Server-only Gemini AI helper for blog article generation
 
+// Helper to try to fix common JSON issues from LLM output
+function parseGeminiJSON(raw: string): any {
+  // First try: standard parse
+  try {
+    return JSON.parse(raw);
+  } catch {
+    // Continue to cleanup
+  }
+
+  // Try to extract between first { and last }
+  const firstBrace = raw.indexOf('{');
+  const lastBrace = raw.lastIndexOf('}');
+  if (firstBrace === -1 || lastBrace <= firstBrace) {
+    throw new Error('No se encontró JSON en la respuesta de Gemini');
+  }
+  let json = raw.slice(firstBrace, lastBrace + 1);
+
+  // Remove markdown code blocks if any remain
+  json = json.replace(/```(?:json)?\s*/gi, '').replace(/\s*```/g, '');
+
+  // Second try: after extracting content
+  try {
+    return JSON.parse(json);
+  } catch {
+    // Continue to deep cleanup
+  }
+
+  // Deep cleanup: fix unescaped characters inside JSON string values
+  // Strategy: rebuild the JSON by finding key-value pairs
+  // First, try to fix unescaped newlines within strings
+  let cleaned = '';
+  let inString = false;
+  let escape = false;
+  for (let i = 0; i < json.length; i++) {
+    const ch = json[i];
+    if (escape) {
+      cleaned += ch;
+      escape = false;
+      continue;
+    }
+    if (ch === '\\') {
+      cleaned += ch;
+      escape = true;
+      continue;
+    }
+    if (ch === '"') {
+      inString = !inString;
+      cleaned += ch;
+      continue;
+    }
+    if (inString && (ch === '\n' || ch === '\r')) {
+      // Replace literal newlines in strings with \n
+      cleaned += '\\n';
+      continue;
+    }
+    cleaned += ch;
+  }
+
+  // Third try: after fixing newlines
+  try {
+    return JSON.parse(cleaned);
+  } catch {
+    // Continue to last resort
+  }
+
+  // Last resort: remove trailing commas and any remaining backticks
+  let final = cleaned
+    .replace(/,\s*}/g, '}')
+    .replace(/,\s*]/g, ']')
+    .replace(/`/g, '')
+    .trim();
+
+  return JSON.parse(final);
+}
+
 export interface GeneratedArticle {
   title: string;
   slug: string;
@@ -31,7 +106,9 @@ REQUISITOS:
 - Si mencionas productos, di "nuestro jamón" o "Ibéricos Gourmet"
 - Al final, incluye una llamada a la acción suave para comprar
 
-RESPONDE ÚNICAMENTE CON JSON CRUDO. SIN markdown, SIN bloques de código, SIN comillas invertidas, SIN etiquetas de ningún tipo. Solo el JSON plano, nada más ni nada menos.
+IMPORTANTE: El contenido del artículo usa ## para títulos, ### para subtítulos y - para listas. El JSON debe ser VÁLIDO: escapa las comillas dobles como \" y los saltos de línea como \n dentro de los strings. No uses saltos de línea literales en los valores del JSON.
+
+RESPONDE ÚNICAMENTE CON JSON CRUDO. SIN markdown, SIN bloques de código, SIN comillas invertidas, SIN etiquetas. Solo el JSON plano en una sola línea o con saltos de línea JSON válidos.
 
 Ejemplo de JSON exacto a devolver:
 {
@@ -83,34 +160,9 @@ Ejemplo de JSON exacto a devolver:
         throw new Error('Gemini no devolvió contenido');
       }
 
-      // Parse the JSON from the response
-      let jsonStr = text.trim();
-
-      // Strategy 1: Try extracting from markdown code block
-      let jsonMatch = jsonStr.match(/```(?:json)?\s*\n?([\s\S]*?)\n?\s*```/);
-      if (jsonMatch) {
-        jsonStr = jsonMatch[1].trim();
-      } else {
-        // Strategy 2: Try to find first { and last } in the text
-        const firstBrace = jsonStr.indexOf('{');
-        const lastBrace = jsonStr.lastIndexOf('}');
-        if (firstBrace !== -1 && lastBrace > firstBrace) {
-          jsonStr = jsonStr.slice(firstBrace, lastBrace + 1);
-        }
-      }
-
-      // Try to parse
-      let article: GeneratedArticle;
-      try {
-        article = JSON.parse(jsonStr) as GeneratedArticle;
-      } catch {
-        // Strategy 3: Clean up common issues and try again
-        jsonStr = jsonStr
-          .replace(/```/g, '')
-          .replace(/^json\s*/i, '')
-          .trim();
-        article = JSON.parse(jsonStr) as GeneratedArticle;
-      }
+      // Parse the JSON from the response (with robust cleanup for LLM output)
+      const parsed = parseGeminiJSON(text);
+      const article = parsed as GeneratedArticle;
 
       // Validate
       if (!article.title || !article.slug || !article.content) {
