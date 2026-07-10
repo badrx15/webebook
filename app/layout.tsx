@@ -40,8 +40,7 @@ export const metadata: Metadata = {
     follow: true,
   },
   verification: {
-    // Google Search Console: añade aquí tu ID de verificación cuando lo tengas
-    // google: 'TU_CODIGO_DE_VERIFICACION',
+    google: 'AZ5GByvwY9Fg9EFUEkdFdOlUQ1G-OyEaWSbZ5vR1xZo',
   },
 };
 
