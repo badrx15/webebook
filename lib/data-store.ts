@@ -346,6 +346,363 @@ Contacta con nosotros por WhatsApp y te ayudamos a elegir el mejor regalo.`,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   },
+  // --- Artículo 7: Historia del jamón ibérico ---
+  {
+    id: 'seed-7',
+    slug: 'historia-del-jamon-iberico-tradicion-milenaria',
+    title: 'Historia del jamón ibérico: una tradición milenaria',
+    excerpt: 'Descubre los orígenes del jamón ibérico, desde la prehistoria hasta la actualidad. Una tradición que se remonta a más de 4.000 años.',
+    content: `## Los orígenes del jamón ibérico
+
+La historia del jamón ibérico se remonta a tiempos ancestrales. Ya en la prehistoria, los pobladores de la Península Ibérica domesticaban cerdos y aprovechaban su carne. La necesidad de conservar los alimentos durante los meses de invierno llevó al descubrimiento de la salazón, técnica que daría origen al jamón.
+
+## La llegada de los fenicios y el arte de la salazón
+
+Fueron los fenicios, comerciantes llegados del Mediterráneo oriental, quienes introdujeron técnicas avanzadas de salazón en la Península Ibérica alrededor del año 1.000 a.C. Estos conocimientos se fusionaron con la tradición local, dando lugar a los primeros jamones curados tal y como los conocemos.
+
+## El cerdo ibérico: una raza única
+
+El cerdo ibérico es una raza autóctona de la Península que se ha criado en la dehesa durante siglos. Su capacidad para infiltrar grasa en el músculo (lo que conocemos como vetas de grasa) es lo que hace que su carne sea tan sabrosa y jugosa.
+
+### La dehesa: ecosistema único
+
+La dehesa es un ecosistema único en el mundo, formado por encinas y alcornoques, donde los cerdos ibéricos viven en libertad. Este paisaje, declarado Reserva de la Biosfera por la UNESCO, es el secreto del sabor inconfundible del jamón ibérico.
+
+## La época romana
+
+Los romanos, grandes amantes de la gastronomía, apreciaban enormemente los jamones de la Península Ibérica. En sus escritos, autores como Catón el Viejo y Plinio el Viejo ya alababan la calidad de estos productos, que se exportaban a todo el Imperio Romano.
+
+## La Edad Media y la tradición judía
+
+Durante la Edad Media, el jamón ibérico adquirió un simbolismo especial. Los cristianos viejos utilizaban el consumo de jamón como una forma de demostrar que no eran judíos ni musulmanes (religiones que no consumen cerdo). Curiosamente, esto contribuyó a que la tradición jamonera se mantuviera viva durante siglos.
+
+## La denominación de origen
+
+En 1991 se creó la primera Denominación de Origen Protegida (DOP) para el jamón ibérico, lo que supuso un antes y un después en la regulación de la calidad. Hoy existen cuatro DOP principales:
+
+- **DOP Guijuelo** (Salamanca)
+- **DOP Dehesa de Extremadura**
+- **DOP Jamón de Jabugo** (Huelva)
+- **DOP Los Pedroches** (Córdoba)
+
+## El jamón ibérico en el siglo XXI
+
+Hoy en día, el jamón ibérico es uno de los productos más valorados de la gastronomía española en todo el mundo. La tecnología ha permitido mejorar los procesos de curación y envasado al vacío, llevando este manjar a cualquier rincón del planeta sin perder un ápice de su calidad.
+
+En Ibéricos Gourmet seguimos esta tradición milenaria con la misma pasión que los antiguos maestros jamoneros, combinando técnicas tradicionales con las mejores prácticas de conservación para ofrecerte un producto excepcional.`,
+    category: 'Producto',
+    tags: ['historia del jamón ibérico', 'origen jamón ibérico', 'tradición jamonera', 'dehesa extremeña', 'denominación de origen'],
+    published: true,
+    views: 0,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  // --- Artículo 8: Beneficios del jamón ibérico para la salud ---
+  {
+    id: 'seed-8',
+    slug: 'beneficios-del-jamon-iberico-para-la-salud',
+    title: 'Beneficios del jamón ibérico para la salud: mitos y realidades',
+    excerpt: '¿Es el jamón ibérico saludable? Te contamos todos sus beneficios nutricionales: ácido oleico, proteínas de calidad, vitaminas y minerales.',
+    content: `## ¿El jamón ibérico es saludable?
+
+Durante años se ha extendido el mito de que el jamón es un alimento poco saludable por su contenido en grasa. Nada más lejos de la realidad. El jamón ibérico, especialmente el de bellota y cebo de campo, es un alimento con múltiples beneficios para la salud.
+
+## Ácido oleico: la grasa buena
+
+La grasa del jamón ibérico es rica en ácido oleico, el mismo tipo de grasa monoinsaturada que encontramos en el aceite de oliva virgen extra. Este tipo de grasa:
+
+- Ayuda a reducir el colesterol LDL (malo)
+- Aumenta el colesterol HDL (bueno)
+- Contribuye a la salud cardiovascular
+- Tiene propiedades antiinflamatorias
+
+## Proteínas de alta calidad
+
+El jamón ibérico es una excelente fuente de proteínas de alto valor biológico. Por cada 100 gramos, aporta aproximadamente:
+
+- **30-35 gramos** de proteínas
+- Todos los aminoácidos esenciales que nuestro cuerpo necesita
+- Ideal para deportistas y personas activas
+
+## Vitaminas y minerales
+
+El jamón ibérico es rico en vitaminas del grupo B, especialmente:
+
+- **Vitamina B1 (Tiamina)**: Importante para el metabolismo energético
+- **Vitamina B3 (Niacina)**: Ayuda a mantener la piel sana y el sistema nervioso
+- **Vitamina B6**: Fundamental para el desarrollo cerebral
+- **Vitamina B12**: Esencial para la formación de glóbulos rojos
+
+Además, es una buena fuente de minerales como:
+
+- **Hierro**: Previene la anemia
+- **Zinc**: Refuerza el sistema inmunológico
+- **Fósforo**: Importante para huesos y dientes
+- **Potasio**: Ayuda a regular la tensión arterial
+
+## ¿Es apto para dietas?
+
+El jamón ibérico puede formar parte de una dieta equilibrada:
+
+- **Dieta keto y baja en carbohidratos**: Es perfecto porque no contiene hidratos de carbono
+- **Dieta mediterránea**: Es un alimento tradicional de esta dieta, considerada la más saludable del mundo
+- **Dieta para deportistas**: Su alto contenido proteico ayuda a la recuperación muscular
+
+## ¿Engorda el jamón ibérico?
+
+Con moderación, el jamón ibérico no engorda. Una ración de 50 gramos aporta aproximadamente:
+
+- **120-150 calorías**
+- Similar a un yogur desnatado con cereales
+- Mucho más saciante que otros aperitivos
+
+## Contraindicaciones
+
+Eso sí, las personas con hipertensión deben moderar su consumo debido al contenido en sal del proceso de curación. También se recomienda consultar con un médico durante el embarazo, aunque el jamón ibérico de bellota de calidad está sometido a controles sanitarios exhaustivos.
+
+**Conclusión**: El jamón ibérico, consumido con moderación dentro de una dieta equilibrada, es un alimento saludable con múltiples beneficios. En Ibéricos Gourmet seleccionamos las mejores piezas para que disfrutes de un producto delicioso y nutritivo.`,
+    category: 'Consejos',
+    tags: ['beneficios jamón ibérico', 'jamón ibérico saludable', 'ácido oleico', 'propiedades del jamón', 'jamón en la dieta'],
+    published: true,
+    views: 0,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  // --- Artículo 9: Cómo cortar jamón ibérico a cuchillo ---
+  {
+    id: 'seed-9',
+    slug: 'como-cortar-jamon-iberico-a-cuchillo',
+    title: 'Cómo cortar jamón ibérico a cuchillo: guía para cortes perfectos',
+    excerpt: 'Aprende la técnica del corte a cuchillo del jamón ibérico. Consejos sobre utensilios, temperatura y la técnica del maestro jamonero.',
+    content: `## El arte del corte a cuchillo
+
+Cortar jamón ibérico a cuchillo es todo un arte que requiere práctica y paciencia. Un buen corte no solo mejora la presentación, sino que realza el sabor y la textura del jamón. Te enseñamos las claves para conseguirlo.
+
+## Utensilios necesarios
+
+### El jamonero
+
+El jamonero es el soporte que sujeta la pieza de jamón. Debe ser:
+- **Estable**: Con base ancha que no se deslice
+- **Ajustable**: Que permita girar la pieza según avanza el corte
+- De acero inoxidable o madera de calidad
+
+### El cuchillo jamonero
+
+Necesitarás dos tipos de cuchillo:
+
+- **Cuchillo de corte largo y flexible**: Para las lonchas. Debe tener una hoja de al menos 25-30 cm.
+- **Cuchillo de despiece o cuchilla corta**: Para acceder a zonas complicadas y deshuesar.
+
+Mantener los cuchillos bien afilados es fundamental para obtener lonchas perfectas.
+
+### El afilador
+
+Un acero o piedra de afilar debe estar siempre a mano. Un cuchillo desafilado desgarrará la carne en lugar de cortarla limpiamente.
+
+## Temperatura ideal del jamón
+
+Antes de empezar a cortar, el jamón debe estar a **temperatura ambiente**:
+
+- Sácalo del frigorífico **30-40 minutos antes** de cortarlo
+- La temperatura ideal está entre **20°C y 24°C**
+- A esta temperatura, la grasa se ablanda y el corte es más limpio
+- El aroma y el sabor se aprecian mucho mejor
+
+## La técnica paso a paso
+
+### 1. Colocación del jamón
+
+Coloca el jamón en el jamonero con la pezuña hacia arriba y la punta hacia abajo. La parte más estrecha (babilla) debe quedar hacia el lado que va a cortar primero.
+
+### 2. Primer corte: abrir el jamón
+
+Retira la corteza exterior y la grasa amarilla de la superficie con un corte horizontal. Deja una capa fina de grasa para proteger la carne.
+
+### 3. Las lonchas
+
+- Coge el cuchillo de corte largo con firmeza pero sin tensión
+- Realiza movimientos largos y suaves, de atrás hacia adelante
+- Las lonchas deben ser finas (2-3 mm de grosor), casi transparentes
+- Corta siempre en la misma dirección, no serrando
+
+### 4. Zona de corte
+
+Empieza por la parte más ancha (la maza) y ve avanzando hacia la babilla. Cuando la zona de corte se vuelva irregular, gira el jamón en el jamonero.
+
+## Errores comunes
+
+- **Cortar demasiado grueso**: Las lonchas deben ser finas para que se deshagan en la boca
+- **Serrar en lugar de deslizar**: El movimiento debe ser limpio, de una sola dirección
+- **No afilar el cuchillo**: Un cuchillo sin filo rompe la fibra y la loncha se desgarra
+- **Jamón demasiado frío**: La grasa fría se rompe y el corte es irregular
+
+## Cómo presentar el jamón
+
+Las lonchas deben servirse en un plato o tabla, extendidas sin amontonarlas. Lo ideal es colocarlas de una en una, solapándolas ligeramente para que sea fácil cogerlas.
+
+En Ibéricos Gourmet cortamos nuestro jamón a cuchillo siguiendo estas técnicas tradicionales para que recibas las lonchas en su punto óptimo de sabor y textura.`,
+    category: 'Consejos',
+    tags: ['cortar jamón ibérico', 'cuchillo jamonero', 'técnica corte jamón', 'jamonero', 'cómo cortar jamón'],
+    published: true,
+    views: 0,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  // --- Artículo 10: Maridaje del jamón ibérico con vino ---
+  {
+    id: 'seed-10',
+    slug: 'maridaje-jamon-iberico-vino-tinto-blanco-cava',
+    title: 'Maridaje perfecto: qué vino acompañar con jamón ibérico',
+    excerpt: 'Descubre los mejores maridajes para el jamón ibérico. Vinos tintos, blancos y cavas que realzan su sabor y convierten cada bocado en una experiencia única.',
+    content: `## El arte del maridaje con jamón ibérico
+
+Acompañar el jamón ibérico con el vino adecuado puede transformar una simple degustación en una experiencia gastronómica inolvidable. Cada tipo de jamón tiene su maridaje ideal.
+
+## Maridaje según el tipo de jamón
+
+### Jamón de Bellota
+
+El jamón de bellota, con su sabor intenso y su grasa rica en ácido oleico, requiere vinos con personalidad:
+
+- **Vino tinto crianza o reserva** de Ribera del Duero o Rioja
+- **Un fino o manzanilla** de Jerez, el maridaje clásico andaluz
+- **Un cava brut nature** largo en crianza
+
+### Jamón de Cebo de Campo (nuestro jamón)
+
+Nuestro jamón de cebo de campo 75% raza ibérica, con su sabor equilibrado y textura suave, admite:
+
+- **Vino tinto joven** con personalidad frutal
+- **Un rosado** de Ribera del Duero o Navarra
+- **Un blanco con cuerpo** como un Rueda fermentado en barrica
+- **Un cava brut** que limpie el paladar entre bocados
+
+## Los maridajes clásicos
+
+### Vino tinto + Jamón ibérico
+
+El maridaje por excelencia. Recomendamos:
+
+- **Rioja Crianza**: La combinación más clásica. Sus taninos suaves complementan la grasa del jamón.
+- **Ribera del Duero**: Un vino con cuerpo que aguanta bien el sabor potente del jamón.
+- **Priorato**: Para ocasiones especiales, su potencia aromática casa a la perfección.
+
+### Fino o Manzanilla + Jamón ibérico
+
+El maridaje tradicional de Andalucía. El fino, seco y con un toque salino, limpia el paladar y prepara para el siguiente bocado. La manzanilla, más ligera, es perfecta para tardes de verano.
+
+### Cava + Jamón ibérico
+
+El cava brut nature, con su burbuja fina y su acidez equilibrada, es ideal para:
+- Aperitivos y celebraciones
+- Contrastar la untuosidad del jamón
+- Maridajes sorprendentes y elegantes
+
+## ¿Y el jamón en la cocina?
+
+Si cocinas con jamón ibérico, el maridaje cambia:
+
+- **Croquetas de jamón**: Un blanco de Rueda o un cava
+- **Huevos rotos con jamón**: Un tinto joven de la tierra
+- **Melón con jamón**: Un Pedro Ximénez dulce o un cava semi-seco
+
+## La temperatura de servicio
+
+Tanto el jamón como el vino deben servirse a la temperatura adecuada:
+
+- **Jamón ibérico**: 20-24°C (temperatura ambiente)
+- **Tinto joven**: 14-16°C
+- **Tinto crianza**: 16-18°C
+- **Blanco/Rosado**: 8-10°C
+- **Cava**: 6-8°C
+- **Fino/Manzanilla**: 8-10°C
+
+## Consejo final
+
+La mejor regla del maridaje es la que te hace disfrutar. No tengas miedo de experimentar. En Ibéricos Gourmet, nuestro jamón de cebo de campo combina de maravilla con un buen tinto de Ribera del Duero o con un cava bien frío para sorprender a tus invitados.`,
+    category: 'Recetas',
+    tags: ['maridaje jamón ibérico', 'vino y jamón', 'qué vino con jamón', 'maridaje jamón vino tinto', 'cava y jamón'],
+    published: true,
+    views: 0,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  // --- Artículo 11: La dehesa extremeña y el jamón ---
+  {
+    id: 'seed-11',
+    slug: 'la-dehesa-extremena-ecosistema-del-jamon-iberico',
+    title: 'La dehesa extremeña: el ecosistema que hace único al jamón ibérico',
+    excerpt: 'Descubre la dehesa extremeña, un ecosistema único en el mundo donde los cerdos ibéricos pastan en libertad. El secreto del mejor jamón está en la tierra.',
+    content: `## ¿Qué es la dehesa?
+
+La dehesa es un ecosistema único en el mundo, un bosque mediterráneo transformado por el ser humano durante siglos para el pastoreo. Se extiende por el suroeste de la Península Ibérica, abarcando principalmente Extremadura, oeste de Andalucía, Castilla y León y el Alentejo portugués.
+
+Extremadura cuenta con más de **1,2 millones de hectáreas de dehesa**, lo que la convierte en la mayor zona de dehesa de España y el corazón del jamón ibérico.
+
+## Los árboles de la dehesa: encinas y alcornoques
+
+La dehesa se compone principalmente de dos tipos de árboles:
+
+### La encina
+
+- Árbol perenne de hoja dura
+- Produce bellotas dulces, las favoritas del cerdo ibérico
+- Puede vivir hasta 500 años
+- Su bellota es más pequeña y dulce que la del alcornoque
+
+### El alcornoque
+
+- También perenne, de corteza gruesa (corcho)
+- Su bellota es más amarga y grande
+- Se aprovecha cada 9-12 años para extraer el corcho
+
+## La montanera: la época más importante del año
+
+La montanera es el período entre octubre y febrero en el que los cerdos ibéricos pastan libremente en la dehesa alimentándose de bellotas, hierbas y raíces. Durante esta época:
+
+- Un cerdo puede recorrer hasta **10 km al día** en busca de bellotas
+- Llega a consumir entre **10 y 12 kg de bellotas al día**
+- Engorda entre **50 y 60 kg** durante la montanera
+- El ejercicio constante contribuye a la infiltración de la grasa en el músculo
+
+## ¿Por qué la bellota es tan importante?
+
+La bellota es el secreto del sabor del jamón ibérico. Es rica en:
+
+- **Ácido oleico**: La grasa saludable que aporta untuosidad y sabor
+- **Hidratos de carbono complejos**: Que el cerdo transforma en grasa infiltrada
+- **Taninos**: Que aportan matices amargos y complejidad al jamón
+
+## La raza ibérica: adaptada a la dehesa
+
+El cerdo ibérico es una raza autóctona perfectamente adaptada a la vida en la dehesa:
+
+- **Pezuñas negras**: Adaptadas para caminar largas distancias
+- **Hocico largo y fuerte**: Ideal para escarbar y encontrar raíces y pequeños animales
+- **Capacidad de infiltrar grasa**: Genéticamente predispuesto a acumular grasa entre las fibras musculares, creando el característico veteado
+
+## Un ecosistema en equilibrio
+
+La dehesa es un ejemplo de desarrollo sostenible:
+
+- Los árboles proporcionan sombra y alimento a los cerdos
+- Los cerdos abonan la tierra y dispersan semillas
+- Se mantiene un equilibrio que favorece la biodiversidad
+- Está declarada como **Sistema Importante del Patrimonio Agrícola Mundial** por la FAO
+
+## Ibéricos Gourmet y la dehesa extremeña
+
+Nuestro jamón de cebo de campo 75% raza ibérica proviene de cerdos criados en las dehesas extremeñas, donde se alimentan de pastos naturales y piensos seleccionados. Aunque no sea de bellota, la calidad de la dehesa extremeña se refleja en cada loncha.
+
+Cuando compras nuestro jamón, estás llevando a tu mesa un producto que lleva siglos de tradición y el sabor de uno de los ecosistemas más bellos y valiosos de España.`,
+    category: 'Producto',
+    tags: ['dehesa extremeña', 'ecosistema dehesa', 'montanera', 'encina', 'cerdo ibérico en la dehesa', 'bellota'],
+    published: true,
+    views: 0,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
 ];
 
 const DEFAULT_DATA: AppData = {
