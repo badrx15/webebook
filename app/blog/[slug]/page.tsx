@@ -41,8 +41,35 @@ export default async function BlogPostPage({ params }: Props) {
   // Format content: simple line breaks to paragraphs
   const paragraphs = post.content.split('\n').filter(Boolean);
 
+  // Article JSON-LD
+  const articleJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: post.title,
+    description: post.excerpt,
+    ...(post.image ? { image: post.image } : {}),
+    datePublished: post.createdAt,
+    dateModified: post.updatedAt,
+    author: {
+      '@type': 'Organization',
+      name: 'Ibéricos Gourmet',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Ibéricos Gourmet',
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `https://ibericosgourmet.vercel.app/blog/${post.slug}`,
+    },
+  };
+
   return (
     <div className="min-h-screen bg-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
       {/* Navbar */}
       <nav className="bg-white border-b border-gray-100">
         <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">

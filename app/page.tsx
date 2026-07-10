@@ -9,8 +9,28 @@ export default async function LandingPage() {
   const { products, settings } = data;
   const currencySymbol = settings.currencySymbol;
 
+  // Products JSON-LD for Google Shopping / Rich Results
+  const productsJsonLd = products.map(p => ({
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: p.name,
+    description: p.description || `${p.name} - Jamón ibérico de la mejor calidad`,
+    ...(p.image ? { image: [p.image] } : {}),
+    sku: p.sku || p.id,
+    offers: {
+      '@type': 'Offer',
+      price: p.sellingPrice,
+      priceCurrency: 'EUR',
+      availability: p.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+      url: `https://ibericosgourmet.vercel.app/checkout?products=${p.id}`,
+    },
+  }));
+
   return (
     <>
+      {productsJsonLd.map((jsonLd, i) => (
+        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      ))}
       <ProductViewTracker products={products.map(p => ({
         id: p.id,
         name: p.name,
