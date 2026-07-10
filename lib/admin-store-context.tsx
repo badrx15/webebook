@@ -17,6 +17,7 @@ const DEFAULT_DATA: AppData = {
   sales: [],
   expenses: [],
   orders: [],
+  blogPosts: [],
   settings: DEFAULT_SETTINGS,
 };
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import type { AppData, Product, Sale, Expense, BusinessSettings, Order, OrderItem, OrderStatus, ShippingAddress } from './types';
+import type { AppData, Product, Sale, Expense, BlogPost, BusinessSettings, Order, OrderItem, OrderStatus, ShippingAddress } from './types';
 import { useAdminInitialData, useAdminDataUpdater } from './admin-store-context';
 
 const DEFAULT_SETTINGS: BusinessSettings = {
@@ -18,6 +18,7 @@ const DEFAULT_DATA: AppData = {
   sales: [],
   expenses: [],
   orders: [],
+  blogPosts: [],
   settings: DEFAULT_SETTINGS,
 };
 
@@ -314,6 +315,32 @@ export function useStore() {
     }));
   }, [mutate]);
 
+  // --- Blog Posts ---
+  const addBlogPost = useCallback((post: Omit<BlogPost, 'id' | 'createdAt' | 'updatedAt'>) => {
+    const now = new Date().toISOString();
+    const newPost: BlogPost = {
+      ...post,
+      id: generateId(),
+      createdAt: now,
+      updatedAt: now,
+    };
+    mutate(prev => ({ ...prev, blogPosts: [...prev.blogPosts, newPost] }));
+    return newPost;
+  }, [mutate]);
+
+  const updateBlogPost = useCallback((id: string, updates: Partial<Omit<BlogPost, 'id' | 'createdAt'>>) => {
+    mutate(prev => ({
+      ...prev,
+      blogPosts: prev.blogPosts.map(p =>
+        p.id === id ? { ...p, ...updates, updatedAt: new Date().toISOString() } : p
+      ),
+    }));
+  }, [mutate]);
+
+  const deleteBlogPost = useCallback((id: string) => {
+    mutate(prev => ({ ...prev, blogPosts: prev.blogPosts.filter(p => p.id !== id) }));
+  }, [mutate]);
+
   // --- Reset ---
   const resetAllData = useCallback(() => {
     mutate(() => DEFAULT_DATA);
@@ -335,6 +362,9 @@ export function useStore() {
     addExpense,
     updateExpense,
     deleteExpense,
+    addBlogPost,
+    updateBlogPost,
+    deleteBlogPost,
     updateSettings,
     resetAllData,
     undo,

@@ -107,6 +107,20 @@ export interface Expense {
   createdAt: string;
 }
 
+export interface BlogPost {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  image?: string;
+  category: string;
+  tags: string[];
+  published: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface BusinessSettings {
   businessName: string;
   currency: string;
@@ -121,6 +135,7 @@ export interface AppData {
   sales: Sale[];
   expenses: Expense[];
   orders: Order[];
+  blogPosts: BlogPost[];
   settings: BusinessSettings;
 }
 

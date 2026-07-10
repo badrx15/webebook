@@ -13,6 +13,7 @@ const NAV_ITEMS = [
   { href: '/admin/sales', label: 'Ventas', icon: '💰' },
   { href: '/admin/orders', label: 'Pedidos Web', icon: '🛒' },
   { href: '/admin/expenses', label: 'Gastos', icon: '💸' },
+  { href: '/admin/blog', label: 'Blog', icon: '📝' },
   { href: '/admin/reports', label: 'Reportes', icon: '📈' },
   { href: '/admin/settings', label: 'Configuración', icon: '⚙️' },
 ];

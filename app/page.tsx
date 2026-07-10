@@ -35,6 +35,7 @@ export default async function LandingPage() {
               <a href="#productos" className="text-sm font-medium text-gray-600 hover:text-red-700 transition-colors">Productos</a>
               <a href="#calidad" className="text-sm font-medium text-gray-600 hover:text-red-700 transition-colors">Calidad</a>
               <a href="#testimonios" className="text-sm font-medium text-gray-600 hover:text-red-700 transition-colors">Opiniones</a>
+              <Link href="/blog" className="text-sm font-medium text-gray-600 hover:text-red-700 transition-colors">Blog</Link>
               <a href="#contacto" className="text-sm font-medium text-gray-600 hover:text-red-700 transition-colors">Contacto</a>
             </div>
 
@@ -281,6 +282,7 @@ export default async function LandingPage() {
               <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">Enlaces</h3>
               <ul className="space-y-2">
                 <li><a href="#productos" className="text-sm hover:text-white transition-colors">Productos</a></li>
+                <li><Link href="/blog" className="text-sm hover:text-white transition-colors">Blog</Link></li>
               </ul>
             </div>
             <div>

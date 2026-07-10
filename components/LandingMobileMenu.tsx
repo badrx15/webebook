@@ -22,6 +22,7 @@ export default function LandingMobileMenu() {
             <a href="#productos" onClick={() => setMenuOpen(false)} className="block text-sm font-medium text-gray-600 hover:text-red-700 py-2">Productos</a>
             <a href="#calidad" onClick={() => setMenuOpen(false)} className="block text-sm font-medium text-gray-600 hover:text-red-700 py-2">Calidad</a>
             <a href="#testimonios" onClick={() => setMenuOpen(false)} className="block text-sm font-medium text-gray-600 hover:text-red-700 py-2">Opiniones</a>
+            <a href="/blog" onClick={() => setMenuOpen(false)} className="block text-sm font-medium text-gray-600 hover:text-red-700 py-2">Blog</a>
             <a href="#contacto" onClick={() => setMenuOpen(false)} className="block text-sm font-medium text-gray-600 hover:text-red-700 py-2">Contacto</a>
           </div>
         </div>

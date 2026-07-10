@@ -18,11 +18,118 @@ const DEFAULT_SETTINGS = {
   lowStockThreshold: 5,
 };
 
+const SEED_BLOG_POSTS = [
+  {
+    id: 'seed-1',
+    slug: 'como-conservar-jamon-iberico-envasado-al-vacio',
+    title: 'Cómo conservar el jamón ibérico envasado al vacío',
+    excerpt: 'Descubre los mejores consejos para conservar tu jamón ibérico envasado al vacío y mantener todo su sabor y aroma durante meses.',
+    content: `## ¿Cuánto dura el jamón ibérico envasado al vacío?
+
+El jamón ibérico envasado al vacío es una de las mejores formas de conservar este manjar. Si se mantiene en condiciones adecuadas, puede conservarse en perfecto estado hasta 6 meses desde su fecha de envasado.
+
+## Condiciones ideales de conservación
+
+Para mantener todas las propiedades del jamón ibérico, es importante seguir estas recomendaciones:
+
+- **Temperatura**: entre 5°C y 10°C. El frigorífico es el lugar ideal.
+- **Humedad**: evitar cambios bruscos de temperatura que puedan generar condensación.
+- **Luz**: mantener alejado de la luz directa del sol.
+- **Posición**: guardar el envase en posición horizontal para que el aceite se distribuya uniformemente.
+
+## ¿Se puede congelar el jamón ibérico?
+
+Sí, el jamón ibérico se puede congelar sin problema. Eso sí, recomendamos consumirlo en un plazo máximo de 3 meses para disfrutar de todo su sabor.
+
+## Cómo descongelar correctamente
+
+Para descongelar el jamón ibérico:
+1. Sácalo del congelador y colócalo en el frigorífico 24 horas antes de consumirlo.
+2. No lo descongeles nunca a temperatura ambiente ni en el microondas.
+3. Una vez descongelado, consúmelo en un plazo de 2-3 días.
+
+## Una vez abierto el envase
+
+Una vez abierto el envase al vacío, el jamón ibérico debe consumirse en un plazo de 3-5 días. Para conservarlo después de abierto:
+
+- Envuelve las lonchas en papel de horno o film transparente.
+- Guárdalo en la parte menos fría del frigorífico.
+- Saca las lonchas unos 15 minutos antes de consumirlas para que recuperen su temperatura y aroma óptimos.`,
+    category: 'Consejos',
+    tags: ['conservación', 'jamón ibérico', 'envasado al vacío', 'consejos'],
+    published: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: 'seed-2',
+    slug: 'recetas-faciles-con-jamon-iberico',
+    title: '5 recetas fáciles con jamón ibérico para sorprender',
+    excerpt: 'Prepara estos 5 platos sencillos pero espectaculares con jamón ibérico. Desde tapas clásicas hasta platos más elaborados.',
+    content: `## 1. Tosta de jamón ibérico con tomate y aceite
+
+La combinación más clásica y deliciosa:
+
+- Tuesta una rebanada de pan de pueblo.
+- Frota un tomate maduro partido por la mitad sobre el pan.
+- Añade un chorrito de aceite de oliva virgen extra.
+- Coloca 3-4 lonchas de jamón ibérico por encima.
+- Un toque de sal en escamas y ¡a disfrutar!
+
+## 2. Huevos rotos con jamón ibérico
+
+Un clásico de la cocina española:
+
+- Fríe patatas en dados hasta que estén doradas.
+- En una sartén aparte, fríe 2 huevos dejando la yema líquida.
+- Coloca las patatas en un plato, los huevos encima y rompe las yemas.
+- Añade lonchas de jamón ibérico por encima.
+- El calor de las patatas y los huevos calentará ligeramente el jamón.
+
+## 3. Espárragos trigueros envueltos en jamón
+
+Un entrante ligero y elegante:
+
+- Lava y corta la parte dura de los espárragos trigueros.
+- Saltéalos en una sartén con aceite de oliva durante 3-4 minutos.
+- Envuelve cada espárrago con media loncha de jamón ibérico.
+- Gratínalos 2 minutos al horno a 200°C.
+- Sirve calientes con un toque de limón.
+
+## 4. Melón con jamón ibérico
+
+El contraste dulce-salado perfecto:
+
+- Corta un melón bien maduro en dados o en bolitas con un sacabolas.
+- Coloca las lonchas de jamón ibérico sobre el melón.
+- Añade unas hojas de menta fresca.
+- Un toque de pimienta negra recién molida.
+- Sirve frío como entrante.
+
+## 5. Revuelto de setas con jamón ibérico
+
+Un plato de cuchara reconfortante:
+
+- Limpia y corta 200g de setas variadas.
+- Pocha media cebolla en una sartén con aceite de oliva.
+- Añade las setas y saltéalas hasta que suelten el agua.
+- Bate 3 huevos y cuájalos a fuego bajo con las setas.
+- Fuera del fuego, añade el jamón ibérico troceado.
+- Sirve con pan tostado.`,
+    category: 'Recetas',
+    tags: ['recetas', 'jamón ibérico', 'cocina', 'tapas'],
+    published: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+];
+
 const DEFAULT_DATA: AppData = {
   products: [],
   sales: [],
   expenses: [],
   orders: [],
+  blogPosts: SEED_BLOG_POSTS,
   settings: DEFAULT_SETTINGS,
 };
 
