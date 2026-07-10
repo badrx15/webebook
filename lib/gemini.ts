@@ -31,13 +31,15 @@ REQUISITOS:
 - Si mencionas productos, di "nuestro jamón" o "Ibéricos Gourmet"
 - Al final, incluye una llamada a la acción suave para comprar
 
-RESPONDE SOLO CON UN JSON VÁLIDO con esta estructura exacta (sin markdown, sin comillas alrededor):
+RESPONDE ÚNICAMENTE CON JSON CRUDO. SIN markdown, SIN bloques de código, SIN comillas invertidas, SIN etiquetas de ningún tipo. Solo el JSON plano, nada más ni nada menos.
+
+Ejemplo de JSON exacto a devolver:
 {
-  "title": "Título del artículo atractivo y SEO (máx 60 caracteres)",
+  "title": "Título SEO máximo 60 caracteres",
   "slug": "slug-unico-en-minusculas-con-guiones",
-  "excerpt": "Resumen breve y atractivo para SEO (máx 160 caracteres)",
-  "content": "Contenido del artículo con ## títulos, ### subtítulos y - listas",
-  "category": "Una de: ${categories.join(', ')}",
+  "excerpt": "Resumen breve máximo 160 caracteres",
+  "content": "Contenido del artículo con ## y ### y -",
+  "category": "Categoría de las listadas",
   "tags": ["tag1", "tag2", "tag3", "tag4"]
 }`;
 
@@ -69,15 +71,34 @@ RESPONDE SOLO CON UN JSON VÁLIDO con esta estructura exacta (sin markdown, sin 
       throw new Error('Gemini no devolvió contenido');
     }
 
-    // Parse the JSON from the response (handle possible markdown code blocks)
-    let jsonStr = text;
-    // Remove markdown code blocks if present
-    const jsonMatch = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+    // Parse the JSON from the response
+    let jsonStr = text.trim();
+
+    // Strategy 1: Try extracting from markdown code block
+    let jsonMatch = jsonStr.match(/```(?:json)?\s*\n?([\s\S]*?)\n?\s*```/);
     if (jsonMatch) {
-      jsonStr = jsonMatch[1];
+      jsonStr = jsonMatch[1].trim();
+    } else {
+      // Strategy 2: Try to find first { and last } in the text
+      const firstBrace = jsonStr.indexOf('{');
+      const lastBrace = jsonStr.lastIndexOf('}');
+      if (firstBrace !== -1 && lastBrace > firstBrace) {
+        jsonStr = jsonStr.slice(firstBrace, lastBrace + 1);
+      }
     }
 
-    const article = JSON.parse(jsonStr.trim()) as GeneratedArticle;
+    // Try to parse
+    let article: GeneratedArticle;
+    try {
+      article = JSON.parse(jsonStr) as GeneratedArticle;
+    } catch {
+      // Strategy 3: Clean up common issues and try again
+      jsonStr = jsonStr
+        .replace(/```/g, '')
+        .replace(/^json\s*/i, '')
+        .trim();
+      article = JSON.parse(jsonStr) as GeneratedArticle;
+    }
 
     // Validate
     if (!article.title || !article.slug || !article.content) {
