@@ -355,6 +355,8 @@ function mergeWithDefaults(raw: any): AppData {
   return {
     ...DEFAULT_DATA,
     ...raw,
+    // Ensure blogPosts is never undefined when old data doesn't have it
+    blogPosts: raw.blogPosts || DEFAULT_DATA.blogPosts,
     settings: { ...DEFAULT_SETTINGS, ...raw.settings },
   };
 }
