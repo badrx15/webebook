@@ -122,6 +122,224 @@ Un plato de cuchara reconfortante:
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   },
+  // --- Artículo 3: Cómo elegir jamón ibérico (etiquetas) ---
+  {
+    id: 'seed-3',
+    slug: 'como-elegir-jamon-iberico-etiquetas-negra-roja-verde-blanca',
+    title: 'Cómo elegir un buen jamón ibérico: guía completa de etiquetas (negra, roja, verde, blanca)',
+    excerpt: 'Aprende a distinguir las 4 etiquetas del jamón ibérico. Te explicamos qué significa cada color y cómo elegir la mejor calidad al comprar jamón ibérico online.',
+    content: `## ¿Por qué es importante saber distinguir las etiquetas del jamón ibérico?
+
+Si estás pensando en comprar jamón ibérico online, una de las primeras cosas que debes conocer son las etiquetas de colores que regulan su calidad. Este sistema, creado por la ASICI (Asociación Interprofesional del Cerdo Ibérico), te ayuda a saber exactamente qué estás comprando.
+
+## Etiqueta Negra: 100% Ibérico de Bellota
+
+La etiqueta negra es la máxima excelencia. Significa que el jamón proviene de un cerdo 100% ibérico puro (sus padres también son 100% ibérico) y ha sido alimentado exclusivamente con bellotas en la dehesa durante la montanera.
+
+- **Raza**: 100% Ibérica
+- **Alimentación**: Bellotas y hierbas naturales
+- **Precio**: El más elevado (calidad superior)
+- **Sabor**: Intenso, complejo, con notas de bellota
+
+## Etiqueta Roja: Ibérico de Bellota
+
+La etiqueta roja también es de máxima calidad, pero el cerdo tiene un 75% o 50% de raza ibérica. La alimentación es la misma: bellotas en libertad durante la montanera.
+
+- **Raza**: 75% o 50% Ibérica
+- **Alimentación**: Bellotas y hierbas naturales
+- **Relación calidad-precio**: Excelente. Calidad de bellota a un precio más asequible.
+
+## Etiqueta Verde: Ibérico de Cebo de Campo
+
+El cerdo es ibérico (50-75%) y se cría en libertad en la dehesa, pero su alimentación es a base de pastos naturales y piensos. No come bellotas.
+
+- **Raza**: 50-75% Ibérica
+- **Alimentación**: Pastos y piensos naturales
+- **Precio**: Más económico que el de bellota
+- **Sabor**: Suave y sabroso. Una opción ideal para el día a día.
+
+Nuestro jamón es precisamente de esta categoría: **Cebo de Campo 75% Raza Ibérica**, criado en las dehesas extremeñas con la mejor alimentación natural.
+
+## Etiqueta Blanca: Ibérico de Cebo
+
+El cerdo es ibérico pero se cría en granja y se alimenta exclusivamente de piensos. Es la categoría más básica.
+
+## ¿Cuál comprar según tu presupuesto?
+
+- **Para ocasiones especiales**: Etiqueta Negra o Roja (bellota)
+- **Para consumo diario con calidad**: Etiqueta Verde (cebo de campo) — la mejor relación calidad-precio
+- **Para cocinar**: Etiqueta Blanca
+
+Si quieres comprar jamón ibérico de cebo de campo con la mejor relación calidad-precio, nuestra selección de 75% raza ibérica es perfecta para ti.`,
+    category: 'Guía de compra',
+    tags: ['cómo elegir jamón ibérico', 'etiquetas jamón ibérico', 'jamón de bellota', 'cebo de campo', 'comprar jamón ibérico'],
+    published: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  // --- Artículo 4: Dónde comprar jamón ibérico online ---
+  {
+    id: 'seed-4',
+    slug: 'donde-comprar-jamon-iberico-online-envio-domicilio',
+    title: 'Dónde comprar jamón ibérico online con envío a domicilio de calidad',
+    excerpt: 'Guía para comprar jamón ibérico online de forma segura. Consejos para elegir tienda online, tipos de jamón y cómo recibirlo cómodamente en casa.',
+    content: `## Comprar jamón ibérico online: una tendencia en crecimiento
+
+Cada vez más personas optan por comprar jamón ibérico online. La comodidad de recibirlo en casa, la posibilidad de comparar precios y la amplia variedad de productos hacen que esta opción sea la favorita de muchos amantes de la gastronomía.
+
+## ¿Qué tener en cuenta al comprar jamón ibérico por internet?
+
+### 1. Etiquetado y calidad
+
+Busca siempre tiendas que especifiquen claramente el tipo de jamón: raza ibérica, alimentación (bellota o cebo de campo) y tiempo de curación. Desconfía de ofertas demasiado baratas sin esta información.
+
+### 2. Formato: entero o loncheado
+
+- **Jamón entero**: Ideal si tienes jamonero y consumes con frecuencia
+- **Loncheado y envasado al vacío**: Perfecto para consumo diario, cómodo y práctico. Nuestro jamón se corta a cuchillo y se envasa al vacío para mantener todo el sabor.
+
+### 3. Envío a domicilio
+
+Asegúrate de que la tienda ofrece:
+- **Envío seguro** con embalaje al vacío
+- **Transporte urgente** para mantener la cadena de frío
+- **Seguro en caso de incidencias**
+
+### 4. Opiniones y valoraciones
+
+Revisa las opiniones de otros clientes antes de comprar. Una tienda de confianza tendrá reseñas positivas y transparentes.
+
+## ¿Jamón de bellota o de cebo de campo para comprar online?
+
+- **Jamón de bellota**: Para paladares exigentes, sabor más intenso y complejo. Precio más elevado.
+- **Jamón de cebo de campo**: Excelente relación calidad-precio. Nuestro jamón de cebo de campo 75% raza ibérica es la opción ideal si buscas calidad a un precio razonable.
+
+## Ventajas de comprar en Ibéricos Gourmet
+
+- **Cortado a cuchillo** por maestro jamonero, no a máquina
+- **Envasado al vacío** individualmente para máxima frescura
+- **Envío a domicilio** rápido y seguro
+- **Pago seguro** con tarjeta o contra reembolso
+- **Atención personalizada** por WhatsApp`,
+    category: 'Guía de compra',
+    tags: ['comprar jamón ibérico online', 'jamón envío a domicilio', 'tienda jamón online', 'comprar jamón internet'],
+    published: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  // --- Artículo 5: Cuánto cuesta el jamón ibérico ---
+  {
+    id: 'seed-5',
+    slug: 'cuanto-cuesta-jamon-iberico-precio-tipos-calidad',
+    title: '¿Cuánto cuesta el jamón ibérico? Precios según tipo y calidad',
+    excerpt: 'Te explicamos los precios del jamón ibérico según su calidad: bellota, cebo de campo y cebo. Descubre cuál es la mejor opción para tu bolsillo sin sacrificar calidad.',
+    content: `## Precio del jamón ibérico: ¿cuánto deberías pagar?
+
+El precio del jamón ibérico varía enormemente según la raza del cerdo, su alimentación y el tiempo de curación. Puedes encontrar desde 15€/kg hasta más de 200€/kg para las piezas más exclusivas.
+
+## Precio según el tipo de jamón
+
+### Jamón de Bellota 100% Ibérico (Etiqueta Negra)
+
+Es el más caro y también el más exclusivo. Los precios oscilan entre:
+- **80€ - 200€/kg**
+- Una pieza entera (6-7kg): 500€ - 1.400€
+
+### Jamón de Bellota 50-75% Ibérico (Etiqueta Roja)
+
+- **50€ - 90€/kg**
+- Una pieza entera: 300€ - 600€
+
+### Jamón de Cebo de Campo 50-75% Ibérico (Etiqueta Verde) — Nuestra recomendación
+
+Es la opción con la mejor relación calidad-precio:
+- **25€ - 45€/kg**
+- En formato loncheado envasado al vacío, los precios son aún más ajustados
+- Perfecto para consumo habitual sin renunciar a la calidad
+
+### Jamón de Cebo (Etiqueta Blanca)
+
+- **12€ - 20€/kg**
+- La opción más económica, pero también la de menor calidad
+
+## ¿Merece la pena pagar más por el jamón de bellota?
+
+Depende del uso que le vayas a dar:
+
+- **Para una ocasión especial**: Sí, el jamón de bellota tiene un sabor y textura superiores
+- **Para consumo diario**: El jamón de cebo de campo ofrece una calidad excelente a un precio mucho más asequible
+- **Para cocinar o taper**: Con uno de cebo básico es suficiente
+
+Nuestro jamón de cebo de campo 75% ibérico está en la mejor franja calidad-precio. Cortado a cuchillo y envasado al vacío, ofrece una experiencia gastronómica excelente por menos de 30€.
+
+## ¿Por qué nuestro precio es competitivo?
+
+Vendemos directamente desde Extremadura, sin intermediarios. Esto nos permite ofrecer jamón ibérico de alta calidad a precios más ajustados que las grandes superficies.
+
+**Conclusión**: Si buscas el mejor jamón ibérico calidad-precio, elige un cebo de campo 75% raza ibérica. Si buscas una experiencia suprema para un regalo o celebración, entonces invierte en un buen bellota.`,
+    category: 'Guía de compra',
+    tags: ['precio jamón ibérico', 'jamón ibérico barato', 'cuánto cuesta el jamón', 'jamón calidad precio', 'comprar jamón barato'],
+    published: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  // --- Artículo 6: Jamón ibérico para regalo ---
+  {
+    id: 'seed-6',
+    slug: 'jamon-iberico-para-regalo-ideas-consejos',
+    title: 'Jamón ibérico para regalo: ideas y consejos para acertar siempre',
+    excerpt: 'Regalar jamón ibérico es un acierto seguro. Descubre qué tipo elegir según la ocasión y el presupuesto, y cómo presentarlo para sorprender.',
+    content: `## ¿Por qué regalar jamón ibérico es siempre un acierto?
+
+El jamón ibérico es uno de los regalos más apreciados en la cultura española. Ya sea para Navidad, un cumpleaños, un detalle empresarial o una cena especial, un buen jamón siempre es bien recibido.
+
+## ¿Qué tipo de jamón regalar según la ocasión?
+
+### Para Navidad o Reyes
+
+Es la época del año donde más se regala jamón. Recomendamos:
+- **Jamón de cebo de campo**: Perfecto para regalar sin desorbitar el presupuesto
+- **Pack de loncheados variados**: Ideal si el destinatario no tiene jamonero
+
+### Para un detalle empresarial
+
+- **Cesta gourmet** con jamón loncheado, aceite y otros productos extremeños
+- Presupuesto desde 30€ a 100€ por detalle
+
+### Para un cumpleaños o celebración especial
+
+- **Jamón de bellota**: Si quieres impresionar y el presupuesto lo permite
+- **Jamón de cebo de campo 75%**: Excelente opción de gama alta a precio contenido
+
+## Cómo presentar el jamón como regalo
+
+- **En su estuche original**: Nuestros envases al vacío son elegantes y presentables
+- **Acompañado de un cuchillo jamonero**: Un detalle extra muy útil
+- **Con una tarjeta personalizada**: Explica el origen y la calidad del producto
+
+## ¿Por qué regalar nuestro jamón?
+
+- **Cortado a cuchillo** por maestro jamonero, no a máquina
+- **Envasado al vacío** en paquetes individuales
+- **75% Raza Ibérica** de la mejor calidad
+- **Envío a domicilio** directamente desde Extremadura
+- **Pago seguro** y atención personalizada por WhatsApp
+
+## Presupuestos para regalar jamón
+
+| Tipo | Precio | Ideal para |
+| --- | --- | --- |
+| Jamón cebo campo loncheado | ~25-30€ | Regalo informal, detalle empresa |
+| Lote gourmet completo | ~50€ | Regalo especial |
+| Jamón de bellota loncheado | ~60-80€ | Ocasión muy especial |
+
+Contacta con nosotros por WhatsApp y te ayudamos a elegir el mejor regalo.`,
+    category: 'Guía de compra',
+    tags: ['jamón para regalo', 'regalar jamón ibérico', 'cesta gourmet', 'jamón navidad', 'detalle empresa jamón'],
+    published: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
 ];
 
 const DEFAULT_DATA: AppData = {
