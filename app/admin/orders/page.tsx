@@ -88,9 +88,8 @@ export default function OrdersPage() {
                   </div>
 
                   {order.shippingAddress && (
-                    <div className="text-xs text-[var(--text-secondary)] space-y-0.5">
+                    <div className="text-xs text-[var(--text-secondary)]">
                       <p>📍 {order.shippingAddress.street}, {order.shippingAddress.city}, {order.shippingAddress.province} ({order.shippingAddress.postalCode})</p>
-                      <p>📧 {order.shippingAddress.email}</p>
                     </div>
                   )}
 

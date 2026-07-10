@@ -44,7 +44,6 @@ export default function CheckoutContent() {
 
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
   const [street, setStreet] = useState('');
   const [city, setCity] = useState('');
   const [province, setProvince] = useState('');
@@ -99,7 +98,6 @@ export default function CheckoutContent() {
   const validateForm = () => {
     if (!fullName.trim()) { setError('Introduce tu nombre completo'); return false; }
     if (!phone.trim() || phone.trim().length < 9) { setError('Introduce un teléfono válido'); return false; }
-    if (!email.trim() || !email.includes('@')) { setError('Introduce un email válido'); return false; }
     if (!street.trim()) { setError('Introduce la calle y número'); return false; }
     if (!city.trim()) { setError('Introduce la ciudad'); return false; }
     if (!province.trim()) { setError('Introduce la provincia'); return false; }
@@ -142,7 +140,7 @@ export default function CheckoutContent() {
         totalAmount,
         paymentMethod: orderPaymentMethod,
         notes,
-        shippingAddress: { street, city, province, postalCode, email },
+        shippingAddress: { street, city, province, postalCode },
         squarePaymentId,
       });
 
@@ -191,7 +189,10 @@ export default function CheckoutContent() {
           notes: notes,
           createdAt: newOrder.createdAt,
         }),
-      }).catch(() => {}); // Silent fail — no afecta al usuario
+      }).then(async res => {
+        const data = await res.json();
+        if (!data.success) console.error('Telegram notify error:', data);
+      }).catch(err => console.error('Telegram notify fetch failed:', err));
 
       setSuccess(true);
     } catch (err: any) {
@@ -213,7 +214,7 @@ export default function CheckoutContent() {
           </h1>
           <p className="text-gray-600 mb-2">Gracias por tu compra, <span className="font-semibold">{fullName}</span>.</p>
           <p className="text-sm text-gray-500 mb-6">
-            {paymentMethod === 'contrareembolso' ? 'Pagas cuando recibas el pedido.' : 'Recibirás un email de confirmación.'}
+            {paymentMethod === 'contrareembolso' ? 'Pagas cuando recibas el pedido.' : 'Pago recibido correctamente.'}
           </p>
           <Link href="/" className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-red-700 text-white font-semibold hover:bg-red-800 transition-all">Volver a la Tienda</Link>
         </div>
@@ -267,12 +268,6 @@ export default function CheckoutContent() {
                     className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-red-300 focus:ring-2 focus:ring-red-100 outline-none text-base"
                     placeholder="Ej: 612 345 678" required />
                   <p className="text-xs text-gray-400 mt-1">Te llamaremos si hay alguna duda</p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
-                  <input type="email" value={email} onChange={e => setEmail(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-red-300 focus:ring-2 focus:ring-red-100 outline-none transition-all text-base"
-                    placeholder="Ej: maria@ejemplo.com" required />
                 </div>
 
                 <div className="pt-4 border-t border-gray-100">

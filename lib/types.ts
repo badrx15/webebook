@@ -47,7 +47,6 @@ export interface ShippingAddress {
   city: string;
   province: string;
   postalCode: string;
-  email: string;
 }
 
 export interface OrderItem {
