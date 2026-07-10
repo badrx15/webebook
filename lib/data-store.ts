@@ -1,5 +1,5 @@
 import type { AppData } from './types';
-import { put, list, get } from '@vercel/blob';
+import { put, list } from '@vercel/blob';
 import fs from 'fs/promises';
 import path from 'path';
 
@@ -389,21 +389,19 @@ export async function setData(data: AppData): Promise<void> {
 
 // --- Vercel Blob (production) ---
 
-const BLOB_OPTIONS = {
-  access: 'private' as const,
-  contentType: 'application/json' as const,
-  addRandomSuffix: false,
-  allowOverwrite: true,
-};
-
 async function getFromBlob(): Promise<AppData> {
   try {
     const { blobs } = await list({ prefix: BLOB_PATHNAME, limit: 1 });
     if (blobs.length === 0) return DEFAULT_DATA;
 
-    const result = await get(blobs[0].url, { access: 'private' });
-    if (!result || result.statusCode !== 200 || !result.stream) return DEFAULT_DATA;
-    const text = await new Response(result.stream).text();
+    const blob = blobs[0];
+    const response = await fetch(blob.url, {
+      headers: {
+        Authorization: `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}`,
+      },
+    });
+    if (!response.ok) return DEFAULT_DATA;
+    const text = await response.text();
     const data = JSON.parse(text);
     return mergeWithDefaults(data);
   } catch (error) {
@@ -415,7 +413,11 @@ async function getFromBlob(): Promise<AppData> {
 async function saveToBlob(data: AppData): Promise<void> {
   try {
     const jsonString = JSON.stringify(data);
-    await put(BLOB_PATHNAME, jsonString, BLOB_OPTIONS);
+    await put(BLOB_PATHNAME, jsonString, {
+      access: 'private',
+      contentType: 'application/json',
+      addRandomSuffix: false,
+    });
   } catch (error) {
     console.error('Error writing to Vercel Blob:', error);
     throw new Error('No se pudieron guardar los datos en el almacenamiento.');
