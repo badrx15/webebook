@@ -44,6 +44,11 @@ export default function CheckoutContent() {
 
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [street, setStreet] = useState('');
+  const [city, setCity] = useState('');
+  const [province, setProvince] = useState('');
+  const [postalCode, setPostalCode] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<'tarjeta' | 'contrareembolso'>('contrareembolso');
   const [notes, setNotes] = useState('');
   const [loading, setLoading] = useState(false);
@@ -94,6 +99,11 @@ export default function CheckoutContent() {
   const validateForm = () => {
     if (!fullName.trim()) { setError('Introduce tu nombre completo'); return false; }
     if (!phone.trim() || phone.trim().length < 9) { setError('Introduce un teléfono válido'); return false; }
+    if (!email.trim() || !email.includes('@')) { setError('Introduce un email válido'); return false; }
+    if (!street.trim()) { setError('Introduce la calle y número'); return false; }
+    if (!city.trim()) { setError('Introduce la ciudad'); return false; }
+    if (!province.trim()) { setError('Introduce la provincia'); return false; }
+    if (!postalCode.trim() || postalCode.trim().length < 5) { setError('Introduce un código postal válido'); return false; }
     return true;
   };
 
@@ -132,6 +142,7 @@ export default function CheckoutContent() {
         totalAmount,
         paymentMethod: orderPaymentMethod,
         notes,
+        shippingAddress: { street, city, province, postalCode, email },
         squarePaymentId,
       });
 
@@ -257,6 +268,45 @@ export default function CheckoutContent() {
                     placeholder="Ej: 612 345 678" required />
                   <p className="text-xs text-gray-400 mt-1">Te llamaremos si hay alguna duda</p>
                 </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                  <input type="email" value={email} onChange={e => setEmail(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-red-300 focus:ring-2 focus:ring-red-100 outline-none transition-all text-base"
+                    placeholder="Ej: maria@ejemplo.com" required />
+                </div>
+
+                <div className="pt-4 border-t border-gray-100">
+                  <h2 className="text-lg font-bold text-gray-900 mb-4">Dirección de envío</h2>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Calle y número *</label>
+                      <input type="text" value={street} onChange={e => setStreet(e.target.value)}
+                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-red-300 focus:ring-2 focus:ring-red-100 outline-none transition-all text-base"
+                        placeholder="Ej: Calle Mayor, 15" required />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Ciudad *</label>
+                        <input type="text" value={city} onChange={e => setCity(e.target.value)}
+                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-red-300 focus:ring-2 focus:ring-red-100 outline-none transition-all text-base"
+                          placeholder="Ej: Salamanca" required />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Provincia *</label>
+                        <input type="text" value={province} onChange={e => setProvince(e.target.value)}
+                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-red-300 focus:ring-2 focus:ring-red-100 outline-none transition-all text-base"
+                          placeholder="Ej: Salamanca" required />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Código Postal *</label>
+                      <input type="text" value={postalCode} onChange={e => setPostalCode(e.target.value)}
+                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-red-300 focus:ring-2 focus:ring-red-100 outline-none transition-all text-base"
+                        placeholder="Ej: 37001" required />
+                    </div>
+                  </div>
+                </div>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Notas (opcional)</label>
                   <textarea value={notes} onChange={e => setNotes(e.target.value)}

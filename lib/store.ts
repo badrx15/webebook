@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import type { AppData, Product, Sale, Expense, BusinessSettings, Order, OrderItem, OrderStatus } from './types';
+import type { AppData, Product, Sale, Expense, BusinessSettings, Order, OrderItem, OrderStatus, ShippingAddress } from './types';
 import { useAdminInitialData, useAdminDataUpdater } from './admin-store-context';
 
 const DEFAULT_SETTINGS: BusinessSettings = {
@@ -286,7 +286,7 @@ export function useStore() {
   }, [mutate]);
 
   // --- Orders (from online store) ---
-  const addOrder = useCallback((order: { items: OrderItem[]; totalAmount: number; paymentMethod: 'tarjeta' | 'contrareembolso'; notes: string; squarePaymentId?: string }) => {
+  const addOrder = useCallback((order: { items: OrderItem[]; totalAmount: number; paymentMethod: 'tarjeta' | 'contrareembolso'; notes: string; shippingAddress: ShippingAddress; squarePaymentId?: string }) => {
     const newOrder: Order = {
       ...order,
       id: generateId(),

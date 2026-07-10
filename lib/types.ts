@@ -42,6 +42,14 @@ export type PaymentMethod = 'Efectivo' | 'Transferencia' | 'Tarjeta' | 'PayPal' 
 
 // --- Order types for the online store ---
 
+export interface ShippingAddress {
+  street: string;
+  city: string;
+  province: string;
+  postalCode: string;
+  email: string;
+}
+
 export interface OrderItem {
   productId: string;
   productName: string;
@@ -60,6 +68,7 @@ export interface Order {
   paymentMethod: OrderPaymentMethod;
   status: OrderStatus;
   notes: string;
+  shippingAddress?: ShippingAddress;
   squarePaymentId?: string;
   createdAt: string;
 }

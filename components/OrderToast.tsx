@@ -66,6 +66,11 @@ export default function OrderToast() {
 
             {/* Order info */}
             <div className="mt-3 bg-gray-50 rounded-lg p-3 space-y-1.5 text-sm">
+              {order.shippingAddress && (
+                <p className="text-xs text-gray-600">
+                  📍 {order.shippingAddress.street}, {order.shippingAddress.city}, {order.shippingAddress.province}
+                </p>
+              )}
               <div className="pt-1 flex items-center justify-between">
                 <span className="text-xs text-gray-500">
                   {order.paymentMethod === 'contrareembolso' ? '💵 Contra reembolso' : '💳 Tarjeta'}

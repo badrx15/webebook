@@ -87,6 +87,13 @@ export default function OrdersPage() {
                     ))}
                   </div>
 
+                  {order.shippingAddress && (
+                    <div className="text-xs text-[var(--text-secondary)] space-y-0.5">
+                      <p>📍 {order.shippingAddress.street}, {order.shippingAddress.city}, {order.shippingAddress.province} ({order.shippingAddress.postalCode})</p>
+                      <p>📧 {order.shippingAddress.email}</p>
+                    </div>
+                  )}
+
                   {order.notes && (
                     <p className="text-xs text-[var(--text-secondary)] italic">📝 {order.notes}</p>
                   )}
