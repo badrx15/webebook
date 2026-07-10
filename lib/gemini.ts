@@ -32,8 +32,8 @@ function extractStringValue(text: string, startIdx: number): { value: string; en
       if (rest.startsWith(',') || rest.startsWith('}') || rest.startsWith(']')) {
         return { value: result, endIdx: i };
       }
-      // Otherwise it's an unescaped internal quote - escape it
-      result += '\\"';
+      // Otherwise it's an unescaped internal quote - include it as-is
+      result += '"';
       i++;
       continue;
     }
@@ -237,7 +237,6 @@ Ejemplo exacto:
       generationConfig: {
         temperature: 0.5,
         maxOutputTokens: 2048,
-        response_mime_type: 'application/json',
       },
     }),
   };
