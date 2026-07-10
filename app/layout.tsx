@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import MetaPixel from '@/components/MetaPixel';
 import VisitorTracker from '@/components/VisitorTracker';
+import WhatsAppFloat from '@/components/WhatsAppFloat';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -24,6 +25,7 @@ export default function RootLayout({
       <body className={`${inter.className} antialiased`}>
         <MetaPixel />
         <VisitorTracker />
+        <WhatsAppFloat />
         {children}
       </body>
     </html>
