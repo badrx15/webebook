@@ -48,7 +48,7 @@ export async function sendTelegramNotification(order: OrderNotification): Promis
     `${paymentEmoji} *Pago:* ${escapeMarkdown(paymentText)}`,
     order.notes ? `📝 *Notas:* ${escapeMarkdown(order.notes)}` : '',
     ``,
-    `🆔 Pedido #${escapeMarkdown(order.id.slice(0, 8))}`,
+    `🆔 Pedido \\#${escapeMarkdown(order.id.slice(0, 8))}`,
   ]
     .filter(Boolean)
     .join('\n');
