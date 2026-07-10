@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { useStore } from '@/lib/store';
 import { Product } from '@/lib/types';
 import { formatCurrency, formatDate, calculateMargin, PRODUCT_CATEGORIES } from '@/lib/utils';
@@ -19,6 +19,63 @@ export default function ProductsPage() {
   const [sortDir, setSortDir] = useState<SortDir>('asc');
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
+  const [compressing, setCompressing] = useState(false);
+
+  // Compress a base64 image to max 800px JPEG 0.7 (reduces ~2MB to ~100-200KB)
+  const compressImageDataUrl = (dataUrl: string): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        const MAX_WIDTH = 800;
+        const scale = Math.min(1, MAX_WIDTH / img.width);
+        const w = Math.round(img.width * scale);
+        const h = Math.round(img.height * scale);
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) { resolve(dataUrl); return; }
+        ctx.drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', 0.7));
+      };
+      img.onerror = () => resolve(dataUrl); // Keep original on error
+      img.src = dataUrl;
+    });
+  };
+
+  // Auto-recompress oversized images on page load
+  const recompressedRef = useRef(false);
+  useEffect(() => {
+    if (recompressedRef.current || products.length === 0) return;
+
+    const run = async () => {
+      const LARGE_THRESHOLD = 200 * 1024; // 200KB in base64 = ~150KB raw
+      let anyCompressed = false;
+
+      for (const product of products) {
+        if (!product.image) continue;
+        // Rough size: base64 length * 3/4 = bytes
+        const approxBytes = (product.image.length * 3) / 4;
+        if (approxBytes > LARGE_THRESHOLD) {
+          try {
+            setCompressing(true);
+            const compressed = await compressImageDataUrl(product.image);
+            // Only update if it actually shrank
+            if (compressed.length < product.image.length * 0.8) {
+              updateProduct(product.id, { image: compressed });
+              anyCompressed = true;
+            }
+          } catch (e) {
+            console.error('Error compressing image for', product.name, e);
+          }
+        }
+      }
+      setCompressing(false);
+      recompressedRef.current = true;
+    };
+
+    run();
+  }, [products]);
 
   // Count orders per product (distinct sales containing each product)
   const productOrders = useMemo(() => {
@@ -71,8 +128,8 @@ export default function ProductsPage() {
     setShowModal(true);
   };
 
-  // Image upload handler — compresses to max 800px width before converting to base64
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Image upload handler — compresses before converting to base64
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     if (!file.type.startsWith('image/')) {
@@ -85,25 +142,13 @@ export default function ProductsPage() {
     }
 
     const reader = new FileReader();
-    reader.onload = (ev) => {
-      const img = new Image();
-      img.onload = () => {
-        // Compress: max 800px width, maintain aspect ratio, JPEG quality 0.7
-        const MAX_WIDTH = 800;
-        const scale = Math.min(1, MAX_WIDTH / img.width);
-        const width = Math.round(img.width * scale);
-        const height = Math.round(img.height * scale);
-
-        const canvas = document.createElement('canvas');
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d')!;
-        ctx.drawImage(img, 0, 0, width, height);
-
-        const compressed = canvas.toDataURL('image/jpeg', 0.7);
-        setForm(f => ({ ...f, image: compressed }));
-      };
-      img.src = ev.target?.result as string;
+    reader.onload = async (ev) => {
+      const dataUrl = ev.target?.result as string;
+      if (!dataUrl) return;
+      setCompressing(true);
+      const compressed = await compressImageDataUrl(dataUrl);
+      setForm(f => ({ ...f, image: compressed }));
+      setCompressing(false);
     };
     reader.readAsDataURL(file);
   };
@@ -174,7 +219,18 @@ export default function ProductsPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold">Productos</h1>
+          <h1 className="text-2xl font-bold flex items-center gap-3">
+            Productos
+            {compressing && (
+              <span className="inline-flex items-center gap-2 text-sm font-normal text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
+                <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+                Comprimiendo imágenes...
+              </span>
+            )}
+          </h1>
           <p className="text-[var(--text-secondary)] mt-1">{products.length} productos registrados</p>
         </div>
         <button onClick={openNew} className="btn-primary">
