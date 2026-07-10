@@ -179,6 +179,7 @@ export default function CheckoutContent() {
           id: newOrder.id,
           customerName: fullName,
           phone: phone,
+          shippingAddress: { street, city, province, postalCode },
           items: cartItems.map(item => ({
             productName: item.productName,
             quantity: item.quantity,

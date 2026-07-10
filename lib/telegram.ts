@@ -5,6 +5,12 @@ interface OrderNotification {
   id: string;
   customerName: string;
   phone: string;
+  shippingAddress?: {
+    street: string;
+    city: string;
+    province: string;
+    postalCode: string;
+  };
   items: { productName: string; quantity: number; totalPrice: number }[];
   totalAmount: number;
   paymentMethod: string;
@@ -40,6 +46,13 @@ export async function sendTelegramNotification(order: OrderNotification): Promis
     ``,
     `👤 *Cliente:* ${escapeMarkdown(order.customerName)}`,
     `📞 *Teléfono:* ${escapeMarkdown(order.phone)}`,
+    order.shippingAddress ? [
+      ``,
+      `📍 *Dirección de envío:*`,
+      `${escapeMarkdown(order.shippingAddress.street)}`,
+      `${escapeMarkdown(order.shippingAddress.city)}, ${escapeMarkdown(order.shippingAddress.province)}`,
+      `${escapeMarkdown(order.shippingAddress.postalCode)}`,
+    ].join('\n') : '',
     ``,
     `*Productos:*`,
     itemsText,

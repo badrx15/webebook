@@ -5,7 +5,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    const { id, customerName, phone, items, totalAmount, paymentMethod, notes, createdAt } = body;
+    const { id, customerName, phone, shippingAddress, items, totalAmount, paymentMethod, notes, createdAt } = body;
 
     // Validate required fields
     if (!id || !customerName || !phone || !items || totalAmount === undefined) {
@@ -19,6 +19,7 @@ export async function POST(req: NextRequest) {
       id,
       customerName,
       phone,
+      shippingAddress,
       items,
       totalAmount,
       paymentMethod,
