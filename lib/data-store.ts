@@ -1599,8 +1599,12 @@ function mergeWithDefaults(raw: any): AppData {
   return {
     ...DEFAULT_DATA,
     ...raw,
-    // Ensure blogPosts is never undefined when old data doesn't have it
-    blogPosts: (raw.blogPosts || DEFAULT_DATA.blogPosts).map((p: any) => ({
+    // Merge seed blog posts (from code) with user-created blog posts (from blob/file)
+    // Seed posts always come from DEFAULT_DATA, user posts come from the stored data
+    blogPosts: [
+      ...DEFAULT_DATA.blogPosts,
+      ...(raw.blogPosts || []).filter((p: any) => !p.id.startsWith('seed-')),
+    ].map((p: any) => ({
       ...p,
       views: p.views ?? 0, // Ensure existing posts without views get 0
     })),
@@ -1650,7 +1654,10 @@ async function getFromBlob(): Promise<AppData> {
 
 async function saveToBlob(data: AppData): Promise<void> {
   try {
-    const jsonString = JSON.stringify(data);
+    // Exclude seed blog posts (defined in code) to reduce storage quota usage
+    const userBlogPosts = data.blogPosts.filter(p => !p.id.startsWith('seed-'));
+    const dataToSave = { ...data, blogPosts: userBlogPosts };
+    const jsonString = JSON.stringify(dataToSave);
     await put(BLOB_PATHNAME, jsonString, {
       access: 'private',
       contentType: 'application/json',
