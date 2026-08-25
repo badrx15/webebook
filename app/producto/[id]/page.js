@@ -20,13 +20,6 @@ export default function ProductPage({ params }) {
   }
 
   const [paymentMethod, setPaymentMethod] = useState('cod');
-  const [selectedOption, setSelectedOption] = useState(
-    product.hasOptions ? product.options[0] : null
-  );
-
-  const currentPrice = product.hasOptions ? selectedOption.price : product.price;
-  const currentQuantity = product.hasOptions ? selectedOption.quantity : product.quantity;
-  const currentProductName = product.hasOptions ? `${product.name} - ${selectedOption.name}` : product.name;
 
   const handlePaymentChange = (e) => {
     setPaymentMethod(e.target.value);
@@ -77,55 +70,15 @@ export default function ProductPage({ params }) {
                   {product.title} <span className="text-2xl text-stone-500">{product.subtitle}</span>
                 </h1>
                 <div className="text-6xl font-black text-jamon mb-4 tracking-tighter">
-                  {currentPrice.toFixed(2).replace('.', ',')}€
+                  {product.price.toFixed(2).replace('.', ',')}€
                 </div>
-                
-                {product.hasOptions && (
-                  <div className="flex flex-col gap-3 my-8">
-                    <p className="text-xs font-bold text-stone-400 uppercase tracking-widest text-left">Selecciona una opción:</p>
-                    <div className="grid grid-cols-2 gap-4">
-                      {product.options.map((opt) => (
-                        <button
-                          key={opt.id}
-                          type="button"
-                          onClick={() => setSelectedOption(opt)}
-                          className={`relative flex flex-col p-4 rounded-2xl border-2 transition-all ${
-                            selectedOption.id === opt.id 
-                              ? 'border-jamon bg-jamon/5 shadow-md' 
-                              : 'border-stone-200 bg-white hover:border-jamon/30'
-                          }`}
-                        >
-                          {opt.popular && (
-                            <span className="absolute -top-3 left-1/2 -translate-x-1/2 gold-gradient text-jamon px-3 py-0.5 rounded-full text-[9px] font-black tracking-widest uppercase shadow-sm whitespace-nowrap">
-                              Mejor Valor
-                            </span>
-                          )}
-                          <span className="font-black text-lg text-stone-900">{opt.name}</span>
-                          <span className="font-bold text-jamon mt-1">{opt.price.toFixed(2).replace('.', ',')}€</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                <div className="flex flex-wrap justify-center gap-4 text-stone-400 font-bold uppercase text-[10px] tracking-widest mb-6 mt-4">
+                <div className="flex flex-wrap justify-center gap-4 text-stone-400 font-bold uppercase text-[10px] tracking-widest mb-6">
                   <div className="flex items-center gap-1.5"><i className="fas fa-truck text-jamon"></i> Envío Gratis</div>
                   <div className="flex items-center gap-1.5"><i className="fas fa-hand-holding-usd text-jamon"></i> Contrarreembolso</div>
                 </div>
                 <p className="text-stone-500 font-medium text-lg leading-relaxed max-w-md mx-auto">
                   {product.description}
                 </p>
-
-                {product.features && (
-                  <ul className="mt-8 mb-4 space-y-3 text-left max-w-md mx-auto">
-                    {product.features.map((feature, idx) => (
-                      <li key={idx} className="flex items-center gap-3 text-stone-600 font-medium">
-                        <i className="fas fa-check-circle text-jamon"></i>
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-                )}
               </div>
             </div>
 
@@ -157,9 +110,9 @@ export default function ProductPage({ params }) {
             </div>
 
             <form action="/api/checkout-jamon" method="POST" className="space-y-6">
-              <input type="hidden" name="productName" value={currentProductName} />
-              <input type="hidden" name="price" value={currentPrice} />
-              <input type="hidden" name="quantity" value={currentQuantity} />
+              <input type="hidden" name="productName" value={product.name} />
+              <input type="hidden" name="price" value={product.price} />
+              <input type="hidden" name="quantity" value={product.quantity} />
               <input type="hidden" name="paymentMethod" value={paymentMethod} />
               
               <div className="bg-stone-50 p-6 rounded-2xl border border-stone-200">
@@ -212,7 +165,7 @@ export default function ProductPage({ params }) {
               <div className="pt-6 mt-6 border-t border-stone-100">
                 <div className="flex justify-between items-end mb-6">
                   <span className="text-stone-500 font-bold">Total a pagar:</span>
-                  <span className="text-3xl font-black text-jamon">{currentPrice.toFixed(2).replace('.', ',')}€</span>
+                  <span className="text-3xl font-black text-jamon">{product.price.toFixed(2).replace('.', ',')}€</span>
                 </div>
                 <button type="submit" className="w-full bg-jamon text-white py-5 rounded-2xl font-black text-xl shadow-xl shadow-jamon/20 hover:opacity-90 hover:scale-[1.02] transition-all flex justify-center items-center gap-3">
                   {paymentMethod === 'cod' ? (

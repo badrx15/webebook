@@ -102,12 +102,40 @@ export default function Home() {
             <span className="text-jamon">75% IBÉRICOS GOURMET</span>
           </h1>
           <p className="text-xl text-stone-500 mb-12 max-w-2xl mx-auto font-medium">
-            La excelencia del ibérico en sobres de 100g, listos para disfrutar. Envío Gratis y Regalo Sorpresa incluido.
+            Jamón de cebo de campo 75% ibérico, loncheado a cuchillo en 5 sobres de 100g. Envío Gratis y Regalo Sorpresa incluido.
           </p>
           
           <Link href="/productos" className="inline-block bg-jamon text-white px-10 py-5 rounded-2xl font-black text-xl shadow-xl shadow-jamon/20 hover:scale-105 transition-all mb-16">
-            VER TODOS LOS PRODUCTOS
+            COMPRAR JAMÓN 75% IBÉRICO
           </Link>
+
+          {/* Producto Único */}
+          <section className="relative w-full max-w-3xl mx-auto bg-white rounded-[2.5rem] border-4 border-yellow-500 shadow-2xl shadow-yellow-500/10 p-8 md:p-12 mb-16">
+            <div className="absolute -top-5 left-1/2 -translate-x-1/2 gold-gradient text-jamon px-8 py-2 rounded-full text-xs font-black tracking-widest uppercase shadow-md whitespace-nowrap">
+              Mejor Valor
+            </div>
+            <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
+              <img src="/product-image.png" alt="Jamón de Cebo de Campo 75% Ibérico" className="w-64 h-64 object-cover rounded-3xl" />
+              <div className="text-center md:text-left flex-1">
+                <h3 className="font-serif text-3xl md:text-4xl font-black text-stone-900 mb-2">
+                  JAMÓN CEBO DE CAMPO <span className="text-2xl text-stone-500">75% IBÉRICO</span>
+                </h3>
+                <p className="text-lg text-stone-500 font-medium mb-4">
+                  Loncheado a cuchillo por maestros jamoneros. 5 sobres de 100g.
+                </p>
+                <div className="text-6xl font-black text-jamon mb-6 tracking-tighter">
+                  39,99€
+                </div>
+                <div className="flex flex-wrap justify-center md:justify-start gap-4 text-stone-400 font-bold uppercase text-[10px] tracking-widest mb-8">
+                  <div className="flex items-center gap-1.5"><i className="fas fa-truck text-jamon"></i> Envío Gratis</div>
+                  <div className="flex items-center gap-1.5"><i className="fas fa-hand-holding-usd text-jamon"></i> Contrarreembolso</div>
+                </div>
+                <Link href="/productos" className="inline-block bg-jamon text-white px-10 py-4 rounded-2xl font-black text-lg shadow-xl shadow-jamon/20 hover:scale-[1.02] transition-all">
+                  VER DETALLES Y COMPRAR
+                </Link>
+              </div>
+            </div>
+          </section>
 
           {/* WhatsApp Purchase Section */}
           <section className="py-12 bg-green-50 text-green-800 rounded-3xl shadow-lg max-w-4xl mx-auto mb-16">

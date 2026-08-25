@@ -30,14 +30,14 @@ export default function ProductosPage() {
             Nuestros <span className="text-jamon">Productos</span>
           </h1>
           <p className="text-xl text-stone-500 max-w-2xl mx-auto font-medium">
-            Elige el pack que mejor se adapte a ti. Todos nuestros sobres son cortados a cuchillo por maestros jamoneros.
+            Jamón de cebo de campo 75% ibérico, loncheado a cuchillo por maestros jamoneros.
           </p>
         </div>
       </header>
 
       {/* Grid de Productos */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-10 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 gap-10 max-w-xl mx-auto">
           {products.map((product) => (
             <div key={product.id} className={`bg-white rounded-[2rem] border-4 p-8 relative group hover:border-jamon/20 transition-all shadow-sm hover:shadow-2xl ${product.popular ? 'border-yellow-500 shadow-2xl scale-105 z-10' : 'border-stone-100'}`}>
               {product.popular ? (
@@ -53,9 +53,9 @@ export default function ProductosPage() {
               <img src={product.image} alt={product.name} className="w-56 h-56 mx-auto mb-6 object-cover group-hover:scale-105 transition-transform" />
               
               <div className="text-center">
-                {!product.hasOptions && <span className="text-2xl font-bold text-jamon">x{product.quantity}</span>}
+                <span className="text-2xl font-bold text-jamon">x{product.quantity}</span>
                 <div className="text-5xl font-black text-jamon mb-4 mt-2 tracking-tighter">
-                  {product.hasOptions ? 'Desde ' : ''}{product.price.toFixed(2).replace('.', ',')}€
+                  {product.price.toFixed(2).replace('.', ',')}€
                 </div>
                 <div className={`font-bold uppercase text-[10px] tracking-widest mb-8 ${product.popular ? 'text-stone-500' : 'text-stone-400'}`}>
                   {product.popular ? 'Mejor Valor - ' : ''}Envío Gratis + Pago Contrarreembolso
