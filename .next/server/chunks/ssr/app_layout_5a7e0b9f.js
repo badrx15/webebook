@@ -1,3 +1,0 @@
-module.exports=[62925,a=>{"use strict";var b=a.i(7997);function c({children:a}){return(0,b.jsxs)("html",{lang:"es",className:"scroll-smooth",children:[(0,b.jsxs)("head",{children:[(0,b.jsx)("link",{rel:"stylesheet",href:"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"}),(0,b.jsx)("script",{src:"https://cdn.tailwindcss.com"})]}),(0,b.jsx)("body",{className:"bg-stone-50 text-stone-900",children:a})]})}a.s(["default",()=>c,"metadata",0,{title:"Ibéricos Gourmet - Jamón de Cebo de Campo 75% Ibérico",description:"La excelencia del ibérico en sobres de 100g, listos para disfrutar. Envío Gratis y Regalo Sorpresa incluido."}])}];
-
-//# sourceMappingURL=app_layout_5a7e0b9f.js.map
